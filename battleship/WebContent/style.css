@@ -39,3 +39,9 @@ a:hover {
 	text-decoration: none;
 	border-radius: 99%;
 }
+
+table, td {
+	padding: .2em;
+	background-color: rgba(109, 165, 221, 0.9);
+	text-align: center;
+}

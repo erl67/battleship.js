@@ -16,20 +16,27 @@
 <title>CS1520 Assignment 2 - Battleship - ERL67</title>
 </head>
 
-<body id="page">
+<body id="main">
 
-<h3 title="click to recolor" onclick="document.getElementsByTagName('h6')[0].append('.'); reColor('page');">CS1520 Assignment 2</h3>
+<h3 title="click to recolor" onclick="document.getElementsByTagName('h6')[0].append('.'); reColor('main');">CS1520 Assignment 2</h3>
 <h4></h4>
 
-<div id="board"></div>
+<div id="board1"></div>
+<div id="board1a"></div>
+
+<div id="board2"></div>
+<div id="board2a"></div>
 
 <h6 title="change innerHTML for color hash"></h6>
 
 <script type='text/javascript'>
 	intro('h4');
-	gameBoard('board');
-	colorize([ 'page']);
-	colorizeText(['page'], true);
+	gameBoard('board1');
+	gameBoard('board1a');
+	gameBoard('board2');
+	gameBoard('board2a');
+	colorize([ 'main']);
+	colorizeText(['main'], true);
 	footerBar();
 </script>
 

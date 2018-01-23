@@ -7,7 +7,7 @@ var boardSize = 10;
 var cols = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 
 function intro(obj) {
-	document.getElementsByTagName(obj)[0].append("Welcome to " + gameName);
+	document.getElementById(obj).append("Welcome to " + gameName);
 }
 
 
@@ -32,6 +32,8 @@ function gameBoard(output) {
 			
 		    tableData = document.createElement("td");
 		    tableData.innerHTML = i.toString() + cols[j].toString();
+			tableData.setAttribute("id", i.toString() + cols[j].toString());
+
 		    tableRow.append(tableData);
 		}
 		table.append(tableRow);

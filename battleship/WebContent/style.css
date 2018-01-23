@@ -3,9 +3,13 @@ html, body {
 	padding: 1em;
 	width: 75%;
 }
+#main {
+	text-align: center;
+}
 div {
 	padding: 1em;
-	margin: .5em;
+	margin: 0 auto;
+	text-align: center;
 }
 #page {
 	font-size: larger;
@@ -43,5 +47,6 @@ a:hover {
 table, td {
 	padding: .2em;
 	background-color: rgba(109, 165, 221, 0.9);
+	margin: 0 auto;
 	text-align: center;
 }

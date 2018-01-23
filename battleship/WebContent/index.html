@@ -18,19 +18,21 @@
 
 <body id="main">
 
-<h3 title="click to recolor" onclick="document.getElementsByTagName('h6')[0].append('.'); reColor('main');">CS1520 Assignment 2</h3>
-<h4></h4>
+<h3 title="click to recolor" onclick="document.getElementById('noise').append('.'); reColor('main');">CS1520 Assignment 2</h3>
+<h4><span id="intro"></span></h4>
 
+<h4>Player 1</h4>
 <div id="board1"></div>
 <div id="board1a"></div>
 
+<h4>Player 2</h4>
 <div id="board2"></div>
 <div id="board2a"></div>
 
-<h6 title="change innerHTML for color hash"></h6>
+<span id="noise" title="change innerHTML for color hash"></span>
 
 <script type='text/javascript'>
-	intro('h4');
+	intro('intro');
 	gameBoard('board1');
 	gameBoard('board1a');
 	gameBoard('board2');

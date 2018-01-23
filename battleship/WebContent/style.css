@@ -2,6 +2,7 @@ html, body {
 	margin: 0 auto;
 	padding: 1em;
 	width: 75%;
+	padding-bottom: 0;
 }
 #main {
 	text-align: center;

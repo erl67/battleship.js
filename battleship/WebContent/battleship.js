@@ -33,6 +33,15 @@ function gameBoard(output) {
 		    tableData = document.createElement("td");
 		    tableData.innerHTML = i.toString() + cols[j].toString();
 			tableData.setAttribute("id", i.toString() + cols[j].toString());
+			
+			tableData.setAttribute("style", "cursor:pointer");
+			tableData.addEventListener("click", function(e) {
+				alert("You clicked: " + e.currentTarget.innerHTML);
+				document.getElementById(e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
+				document.getElementById(e.currentTarget.innerHTML).removeEventListener("click");
+
+				//e.setAttribute("style", "background-color:#c0c0c0");
+			})
 
 		    tableRow.append(tableData);
 		}

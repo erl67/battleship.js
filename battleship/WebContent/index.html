@@ -32,15 +32,21 @@
 <span id="noise" title="change innerHTML for color hash"></span>
 
 <script type='text/javascript'>
+
 	intro('intro');
 	gameBoard('board1');
 	gameBoard('board1a');
 	gameBoard('board2');
 	gameBoard('board2a');
-	colorize([ 'main']);
-	colorizeText(['main'], true);
-	footerBar();
+	
+	window.onload = function() {
+		colorize([ 'main']);
+		colorizeText(['main'], true);
+		footerBar();
+	};
+
 </script>
+
 
 </body>
 </html>

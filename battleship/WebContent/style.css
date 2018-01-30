@@ -12,28 +12,7 @@ div {
 	margin: 0 auto;
 	text-align: center;
 }
-#page {
-	font-size: larger;
-	background-color: rgba(0, 0, 58, 0.3);
-}
-#fries {
-	background-color: rgba(216, 172, 12, 0.6);
-}
-#chicken {
-	background-color: rgba(191, 125, 63, 0.94);
-}
-.ranch {
-	font-size: smaller;
-	background-color: rgba(122, 153, 51, 0.1);
-}
-.polynesian {
-	font-size: smaller;
-	background-color: rgba(76, 25, 25, 0.97);
-}
-.sriracha {
-	font-size: smaller;
-	background: repeating-linear-gradient(-45deg,#f0908f,#f0908f 2px,#e48988 0,#e48988 4px);
-}
+
 a {
 	color: inherit;
 	text-decoration: underline;
@@ -50,4 +29,7 @@ table, td {
 	background-color: rgba(109, 165, 221, 0.9);
 	margin: 0 auto;
 	text-align: center;
+}
+footer {
+	height: 1000px;
 }

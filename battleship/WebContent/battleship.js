@@ -4,18 +4,26 @@
 
 var gameName = "Battleship";
 var boardSize = 10;
-var cols = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+var cols = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+var ships = ["Aircraft Carrier", "Battleship", "Submarine"];
+var userNames = ["Alice", "Bob"];
 
 function intro(obj) {
 	document.getElementById(obj).append("Welcome to " + gameName);
 	
 //	for (x in document.querySelectorAll('.initialInput')) document.querySelectorAll('.initialInput')[x].style.display = 'none';
-//	for (x in document.getElementsByClassName('initialInput')) document.getElementsByClassName('initialInput')[x].style.display = 'none';
+	
+//	x = document.querySelectorAll('.initialInput');
+//	for (var i = 0; i < x.length; i++) x[i].style.display = 'none';
+	
+	// for (x in document.getElementsByClassName('initialInput')) document.getElementsByClassName('initialInput')[x].style.display = 'none';
 	
 	document.getElementById("player2input").style.display = "none";
-	document.getElementById("board1a").style.display = "none";
-	document.getElementById("board2").style.display = "none";
-	document.getElementById("board2a").style.display = "none";
+	
+	document.getElementById("player1").style.display = "none";
+	document.getElementById("player2").style.display = "none";
+	
+	document.getElementById("board1").style.display = "block";
 }
 
 
@@ -74,57 +82,66 @@ function processShips(player) {
 	
 	if (player == 1) {
 		var input = document.inputForm.inputShips.value;
+		userNames[0] = document.inputForm.inputName.value;
+		localStorage.setItem("Player1", userNames[0]);
 		
 	    if (input == "" || input.length <= 5) {
 			success = false;
-			alert ("Not a valid ship position")
+			alert ("Not valid starting positions.");
 	    } else {
 			alert("Player " + player + " input is: " + input);
+	    	var inputArr = input.split(",");
+	    	if (inputArr.length !== 3) {
+	    		alert("Not proper number of positions " + inputArr.length);
+	    	}
 	    }
 		
-
 		if (success === true) {
-			localStorage.setItem("Player 1 positions", input);
+			for (var i = 0; i < inputArr.length; i++) {
+				setShips(player, ships[i], inputArr[i]);
+			}
 			
 			document.getElementById("player"+player+"input").style.display = "none";
 			document.getElementById("player2input").style.display = "block";
 		}
 		
 	} else if (player == 2) {
-		var input = document.inputForm.inputShips.value;
+		var input = document.inputForm2.inputShips2.value;
+		userNames[1] = document.inputForm2.inputName2.value;
+		localStorage.setItem("Player2", userNames[1]);
 
 	    if (input == "" || input.length <= 5) {
 			success = false;
-			alert ("Not a valid ship position")
+			alert ("Not valid starting positions.");
 	    } else {
 			alert("Player " + player + " input is: " + input);
-	    }
+	    	var inputArr = input.split(",");
+	    	if (inputArr.length !== 3) {
+	    		alert("Not proper number of positions " + inputArr.length);
+	    	}
+    	}
 		if (success === true) {
-			localStorage.setItem("Player 2 positions", value);
-
+			for (var i = 0; i < inputArr.length; i++) {
+				setShips(player, ships[i], inputArr[i]);
+			}
 			document.getElementById("player"+player+"input").style.display = "none";
+			document.getElementById("player1").style.display = "block";
 		}
 	}
 	
-	
-//	if (success === true) {
-//		document.getElementById("player"+player+"input").style.display = "none";
-//		if (player == 1) document.getElementById("player2input").style.display = "block";
-//	}
 
     return success;
 }
 
-function getShips(player) {
-	return localStorage.getItem("Player "+player+" positions", value);
+function getShip(player, ship) {
+	return localStorage.getItem("Player" + player + " " + ship);
 }
 
 function setShips(player, ship, coords) {
-	localStorage.setItem("Player" + player + " " + ship, coords);
-
-	return false;
+	return localStorage.setItem("Player" + player + " " + ship, coords);
 }
 
 function gameOver () {
 	localStorage.clear();
+	alert ("Game Over");
 }

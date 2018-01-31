@@ -8,7 +8,8 @@
 <meta name="author" content="erl67">
 <meta name="description" content="CS1520 Project 2 Page for ERL67 https://w8s-class.github.io/CS1520-Class-Information/assignments/assignment2/index.html">
 <link rel="alternate" title="hosted version" href="http://cs1520.ericlaslo.com/page2/">
-<link rel="icon" type="image/x-icon" href="http://cs334.ericlaslo.com/assets/images/faviconb.ico">
+<!-- <link rel="icon" type="image/x-icon" href="http://cs334.ericlaslo.com/assets/images/faviconb.ico"> -->
+<link rel="icon" type="image/x-icon" href="./favicon.ico"> <!-- https://www.freefavicon.com/freefavicons/objects/iconinfo/battleship-2-152-289597.html -->
 <link rel="stylesheet" type="text/css" href="./style.css">
 <script src="./footerbar.js" type="text/javascript"></script>
 <script src="./color.js" type="text/javascript"></script>
@@ -22,19 +23,21 @@
 
 <div id="player1input" class="initialInput">
 <h5>Player 1, enter your ship positions</h5>
-    <form name="inputForm" method="post" onsubmit="processShips(1);"> 
+    <form name="inputForm" action="" onsubmit="return processShips(1);"> 
        	<input type="text" name="inputName" value="" placeholder="Name" maxlength="20">
     	<input type="text" name="inputShips" value="" placeholder="3 ships">
-    	<input type="submit" id="btnEnter" name="btnEnter" value="Submit" onclick="processShips(1);">
+    	<button type="submit">Submit</button>
+<!--     	<input type="submit" id="btnEnter" name="btnEnter" value="Submit"  onclick="processShips(1);"> -->
     </form>
 </div>
 
 <div id="player2input" class="initialInput">
 <h5>Player 2, enter your ship positions</h5>
-    <form name="inputForm2" method="post" onsubmit="processShips(2);"> 
+    <form name="inputForm2" action="" onsubmit="return processShips(2);"> 
          <input type="text" name="inputName2" value="" placeholder="Name" maxlength="20">
     	<input type="text" name="inputShips2" value="" placeholder="3 ships">
-    	<input type="submit" id="btnEnter2" name="btnEnter2" value="Submit" onclick="processShips(2);">
+    	<button type="submit">Submit</button>
+<!--     	<input type="submit" id="btnEnter2" name="btnEnter2" value="Submit"> -->
     </form>
 </div>
 
@@ -50,28 +53,29 @@
 	<div id="board2a"></div>
 </div>
 
-<span id="noise" title="change innerHTML for color hash"></span>
+
+<footer id="noise" title="change innerHTML for color hash"></footer>
 
 <script type='text/javascript'>
 
-	intro('intro');
-	
-	gameBoard('board1', 'board1');
-	gameBoard('board1a', 'board1a');
-	
-	gameBoard('board2','board2');
-	gameBoard('board2a','board2a');
-	
+
+
+gameBoard('board1', 'board1');
+gameBoard('board1a', 'board1a');
+
+gameBoard('board2','board2');
+gameBoard('board2a','board2a');
+
+intro('intro');
+
 	window.onload = function() {
 		colorize([ 'main']);
 		colorizeText(['main'], true);
 		footerBar();
 	};
 	
-	//document.getElementById('noise').innerHTML = getShips(1);
 
 </script>
 
-<footer></footer>
 </body>
 </html>

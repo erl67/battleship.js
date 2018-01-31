@@ -7,29 +7,41 @@ var boardSize = 10;
 var cols = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
 var ships = ["Aircraft Carrier", "Battleship", "Submarine"];
 var userNames = ["Alice", "Bob"];
+//var positions = [0,0,0,0,0,0];
+
+//var inProgress = localStorage.getItem("GameInProgress") == null ? false : true;
+var inProgress = false;
 
 function intro(obj) {
 	document.getElementById(obj).append("Welcome to " + gameName);
 	
-//	for (x in document.querySelectorAll('.initialInput')) document.querySelectorAll('.initialInput')[x].style.display = 'none';
 	
+//	for (x in document.querySelectorAll('.initialInput')) document.querySelectorAll('.initialInput')[x].style.display = 'none';
 //	x = document.querySelectorAll('.initialInput');
 //	for (var i = 0; i < x.length; i++) x[i].style.display = 'none';
-	
 	// for (x in document.getElementsByClassName('initialInput')) document.getElementsByClassName('initialInput')[x].style.display = 'none';
 	
-	document.getElementById("player2input").style.display = "none";
-	
-	document.getElementById("player1").style.display = "none";
-	document.getElementById("player2").style.display = "none";
-	
-	document.getElementById("board1").style.display = "block";
+//	if (inProgress == false) {
+		
+		document.getElementById("player2input").style.display = "none";
+		document.getElementById("player1").style.display = "none";
+		document.getElementById("player2").style.display = "none";
+		document.getElementById("board1").style.display = "block";
+		
+//		do {
+//		} while (positions[0]==0 && positions[1]==0 && positions[2]==0);
+		
+//	} else {
+//		document.getElementById("player1input").style.display = "none";
+//		document.getElementById("player2input").style.display = "none";
+//	}
 }
 
 
 function gameBoard(output, boardName) {
-	board = new Array(new Array());
-	board2 = new Array();
+	
+//	board = new Array(new Array());
+//	board2 = new Array();
 	var hit = true; 
 	
 	this.name = output;
@@ -76,6 +88,70 @@ function gameBoard(output, boardName) {
 	output.append(table);
 	
 }
+
+//function processShips(player) {
+//	var success = true;
+//	
+//	if (player == 1) {
+//		var input = document.inputForm.inputShips.value;
+//		userNames[0] = document.inputForm.inputName.value;
+//		localStorage.setItem("Player1", userNames[0]);
+//		
+//	    if (input == "" || input.length <= 5) {
+//			success = false;
+//			alert ("Not valid starting positions.");
+//	    } else {
+//			alert("Player 1 input is: " + input);
+//	    	var inputArr = input.split(",");
+//	    	if (inputArr.length !== 3) {
+//	    		alert("Not proper number of positions " + inputArr.length);
+//	    	} 
+//	    }
+//		
+//		if (success == true) {
+//			alert("Player 1 success");
+//			document.getElementById("player1input").style.display = "none";
+//			document.getElementById("player2input").style.display = "block";
+//			
+//			for (var i = 0; i < inputArr.length; i++) {
+////	    		positions[i] = inputArr[i];
+////				setShips(player, ships[i], inputArr[i]);
+//				alert("Player 1 setting");
+//			}
+//			document.getElementById("player"+player+"input").style.display = "none";
+//
+//		}
+//	}
+//
+//	if (player == 2) {
+//		var input = document.inputForm2.inputShips2.value;
+//		userNames[1] = document.inputForm2.inputName2.value;
+//		localStorage.setItem("Player2", userNames[1]);
+//
+//	    if (input == "" || input.length <= 5) {
+//			success = false;
+//			alert ("Not valid starting positions.");
+//	    } else {
+//			alert("Player 2 input is: " + input);
+//	    	var inputArr = input.split(",");
+//	    	if (inputArr.length !== 3) {
+//	    		alert("Not proper number of positions " + inputArr.length);
+//	    	}
+//    	}
+//		if (success == true) {
+//			for (var i = 0; i < inputArr.length; i++) {
+////	    		positions[i+3] = inputArr[i];
+//				setShips(player, ships[i], inputArr[i]);
+//			}
+//			document.getElementById("player"+player+"input").style.display = "none";
+////			document.getElementById("player1").style.display = "block";  // change to game method
+//		}
+//	}
+//
+//	alert("Returning");
+//
+//    return success;
+//}
 
 function processShips(player) {
 	var success = true;

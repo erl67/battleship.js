@@ -16,9 +16,10 @@ function colorizeText (obj, bw) {
 	for (element in obj) document.getElementById(obj[element]).style.color = invertColor(rgb2hex(document.getElementById(obj[element]).style.backgroundColor), bw);
 }
 
-function reColor(object) {
-	  colorize([object]);
-	  colorizeText([object], true);
+function reColor(noise, object, bw) {
+	document.getElementById(noise).append('.');
+	colorize([object]);
+	colorizeText([object], bw);
 }
 
 function stringToColour(str) {	//stackoverflow.com/questions/3426404

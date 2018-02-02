@@ -12,7 +12,10 @@ div {
 	margin: 0 auto;
 	text-align: center;
 }
-
+.btn {
+	padding: 1em;
+	margin: 3em;
+}
 a {
 	color: inherit;
 	text-decoration: underline;
@@ -30,6 +33,10 @@ table, td {
 	margin: 0 auto;
 	text-align: center;
 }
+td {
+	border:3px ridge #29e1fd;
+}
 footer {
 	height: 1000px;
 }
+

@@ -18,7 +18,7 @@
 </head>
 
 <body id="main">
-<h3 title="click to recolor" onclick="document.getElementById('noise').append('.'); reColor('main');">CS1520 Assignment 2</h3>
+<h3 title="click to recolor" onclick="reColor('noise', 'main', true);">CS1520 Assignment 2</h3>
 <h4><span id="intro"></span></h4>
 
 <div id="player1input" class="initialInput">
@@ -42,23 +42,25 @@
 </div>
 
 <div id="player1">
-	<h4>Player 1</h4>
+	<h4 id="player1Name">Player 1</h4>
+	<h6>Enemy</h6>
 	<div id="board1"></div>
+	<h6>Friendly</h6>
 	<div id="board1a"></div>
 </div>
 
 <div id="player2">
-	<h4>Player 2</h4>
+	<h4 id="player2Name">Player 2</h4>
 	<div id="board2"></div>
 	<div id="board2a"></div>
 </div>
 
 
-<footer id="noise" title="change innerHTML for color hash"></footer>
+<footer id="noise" title="change innerHTML for color hash">
+	<button type="submit" onclick="localStorage.clear();" class="btn">Reset</button><br/>
+</footer>
 
 <script type='text/javascript'>
-
-
 
 gameBoard('board1', 'board1');
 gameBoard('board1a', 'board1a');
@@ -68,11 +70,11 @@ gameBoard('board2a','board2a');
 
 intro('intro');
 
-	window.onload = function() {
-		colorize([ 'main']);
-		colorizeText(['main'], true);
-		footerBar();
-	};
+window.onload = function() {
+	colorize(['main']);
+	colorizeText(['main'], true);
+	footerBar();
+};
 	
 
 </script>

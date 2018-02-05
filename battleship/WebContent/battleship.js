@@ -84,69 +84,86 @@ function gameBoard(output, boardName) {
 		
 	}
 	output.append(table);
+}
+
+function regexShip(input, player) {
+	var rSuccess = true;
+//	var search = new RegExp("abc");
+//	var search2 = new RegExp("abcde");
 	
+	alert("Player" + player + " input is: " + input);
+	
+	var inputArr = input.split(",");
+	
+	rSuccess = rSuccess == true ? inputArr : false;
+	return rSuccess;
 }
 
 function processShips(player) {
 	var success = true;
-	
+
 	if (player == 1) {
 		var input = document.inputForm.inputShips.value;
 		userNames[0] = document.inputForm.inputName.value;
 		localStorage.setItem("Player1", userNames[0]);
-		
-	    if (input == "" || input.length <= 5) {
-			success = false;
-			alert ("Not valid starting positions.");
-	    } else {
-			alert("Player 1 input is: " + input);
-	    	var inputArr = input.split(",");
-	    	if (inputArr.length !== 3) {
-	    		alert("Not proper number of positions " + inputArr.length);
-	    	} 
-	    }
-		
-		if (success == true) {
-			alert("Player 1 success");
-			document.getElementById("player1input").style.display = "none";
-			document.getElementById("player2input").style.display = "block";
-			
-			for (var i = 0; i < inputArr.length; i++) {
-	    		positions[i] = inputArr[i];
-				setShips(player, ships[i], inputArr[i]);
-			}
-			document.getElementById("player"+player+"input").style.display = "none";
-		}
 	} else if (player == 2) {
 		var input = document.inputForm2.inputShips2.value;
 		userNames[1] = document.inputForm2.inputName2.value;
 		localStorage.setItem("Player2", userNames[1]);
-
-	    if (input == "" || input.length <= 5) {
+	}
+		
+    if (input == "" || input.length <= 5 || input.split(",").length != 3) {
+		success = false;
+		alert ("Not valid starting positions.");
+		return false;
+    } else {
+    	var inputArr = regexShip (input, player);
+    	if (inputArr == false) {
 			success = false;
-			alert ("Not valid starting positions.");
-	    } else {
-			alert("Player 2 input is: " + input);
-	    	var inputArr = input.split(",");
-	    	if (inputArr.length !== 3) {
-	    		alert("Not proper number of positions " + inputArr.length);
-	    	}
+			alert ("No valid regex found.");
+			return false;
     	}
-		if (success == true) {
-			for (var i = 0; i < inputArr.length; i++) {
-	    		positions[i+3] = inputArr[i];
-				setShips(player, ships[i], inputArr[i]);
-			}
-			document.getElementById("player"+player+"input").style.display = "none";
-			document.getElementById("player1").style.display = "block";  // change to game method
-			localStorage.setItem("GameInProgress", inProgress);
-			localStorage.setItem("ActiveTurn", activeTurn);
+		alert("Player " + player + " success?");
+		
+		for (var i = 0; i < inputArr.length; i++) {
+    		positions[i] = inputArr[i];
+			setShips(player, ships[i], inputArr[i]);
 		}
+    }
+    
+    alert (inputArr);
+
+	if ((player == 1) && (success == true)) {
+		document.getElementById("player1input").style.display = "none";
+		document.getElementById("player2input").style.display = "block";
+	} else if ((player == 2) && (success == true)) {
+		document.getElementById("player"+player+"input").style.display = "none";
+		document.getElementById("player1").style.display = "block";  // change to game method
+		localStorage.setItem("GameInProgress", inProgress);
+		localStorage.setItem("ActiveTurn", activeTurn);
 	}
 
 	alert("Returning");
-    return false;
+	return false;	// must stay false or form won't work
 }
+
+//function regexShip(string, player) {
+//	var success = true;
+//	var search = new RegExp("abc");
+//	var search2 = new RegExp("abcde");
+//	
+//	alert("Player" + player + " input is: " + input);
+//	
+//	var inputArr = input.split(",");
+//	
+////	if (inputArr.length !== 3) {
+////		alert("Not proper number of positions " + inputArr.length);
+////		success = false;
+////	} 
+//	
+//	success = success == true ? inputArr : false;
+//	return success;
+//}
 
 function getShip(player, ship) {
 	return localStorage.getItem("Player" + player + " " + ship);

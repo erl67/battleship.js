@@ -15,11 +15,6 @@ var activeTurn = localStorage.getItem("activeTurn") == 2 ? 2 : 1;
 function intro(obj) {
 	document.getElementById(obj).append("Welcome to " + gameName);
 	
-//	for (x in document.querySelectorAll('.initialInput')) document.querySelectorAll('.initialInput')[x].style.display = 'none';
-//	x = document.querySelectorAll('.initialInput');
-//	for (var i = 0; i < x.length; i++) x[i].style.display = 'none';
-	// for (x in document.getElementsByClassName('initialInput')) document.getElementsByClassName('initialInput')[x].style.display = 'none';
-	
 	if (inProgress == true) {
 		document.getElementById("player1input").style.display = "none";
 		document.getElementById("player2input").style.display = "none";
@@ -27,18 +22,54 @@ function intro(obj) {
 		document.getElementById("player2").style.display = "none";
 		userNames[0] = localStorage.getItem("Player1");
 		userNames[1] = localStorage.getItem("Player2");
+		positions[0] = localStorage.getItem("Player1 Aircraft Carrier");
+		positions[1] = localStorage.getItem("Player1 Battleship");
+		positions[2] = localStorage.getItem("Player1 Submarine");
+		positions[3] = localStorage.getItem("Player2 Aircraft Carrier");
+		positions[4] = localStorage.getItem("Player2 Battleship");
+		positions[5] = localStorage.getItem("Player2 Submarine");
 		
+		buildOceans();
+		gameTurnReady (activeTurn);
+
 	} else {
 		document.getElementById("player1input").style.display = "block";
 		document.getElementById("player2input").style.display = "none";
 		document.getElementById("player1").style.display = "none";
 		document.getElementById("player2").style.display = "none";
 	}
+	
+	
 		
 }
 
+function gameTurnReady (player) {
+	document.getElementById("player1").style.display = "none";
+	document.getElementById("player2").style.display = "none";
+//	alert ("ready player " + player);
+	if (player == 1) {
+		document.getElementById("player1warn").style.display = "block";
+	} else if (player == 2) {
+		document.getElementById("player2warn").style.display = "block";
+	}
 
-function gameBoard(output, boardName) {
+}
+
+function gameTurn (player) {
+	alert ("Player " + player + " attacking");
+	document.getElementById("player"+player+"warn").style.display = "none";
+	document.getElementById("player"+player).style.display = "block";
+}
+
+function buildOceans() {
+	gameBoard('board1', 'board1', 1, 2, true);
+	gameBoard('board1a', 'board1a', 1, 2, false);
+
+	gameBoard('board2','board2', 2, 1, true);
+	gameBoard('board2a','board2a', 2, 1, false);
+}
+
+function gameBoard(output, boardName, player, opponent, event) {
 	
 	var hit = true; 
 	
@@ -55,29 +86,37 @@ function gameBoard(output, boardName) {
 		for (j = 0; j < boardSize; j++) {
 			
 		    tableData = document.createElement("td");
-		    tableData.innerHTML = i.toString() + cols[j].toString();
+		    var cellString = i.toString() + cols[j].toString();
+		    tableData.innerHTML = cellString;
 			tableData.setAttribute("id", i.toString() + cols[j].toString());
-			tableData.setAttribute("class", boardName);
+			tableData.setAttribute("class", player);
 			tableData.setAttribute("style", "cursor:pointer");
 			
-			tableData.addEventListener("click", function(e) {
-				
-				var old_element = document.getElementById(e.currentTarget.innerHTML);	//remove event listener stackoverflow.com/a/9251864/7491839
-				var new_element = old_element.cloneNode(true);
-				old_element.parentNode.replaceChild(new_element, old_element);
-				
-				alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.getAttribute("class"));
-				
-				var hit = Math.random() >= 0.5;
-				
-				if (hit == false) { //need to get class from board name
-					document.getElementById(e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
-				} else {
-					document.getElementById(e.currentTarget.innerHTML).setAttribute("style", "background-color:#cc0000");
-				}
-				
-			});
+			if (event == true){
+				tableData.addEventListener("click", function(e) {
+					
+					localStorage.setItem(e.currentTarget.getAttribute("class")+ " " + e.currentTarget.innerHTML, "-");
+					
+					var hit = Math.random() >= 0.5;
+					
+					if (hit == false) { //need to get class from board name
+						document.getElementById(e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
+					} else {
+						document.getElementById(e.currentTarget.innerHTML).setAttribute("style", "background-color:#cc0000");
+					}
+					
+					alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.getAttribute("class"));
 
+					var old_element = document.getElementById(e.currentTarget.innerHTML);	//remove event listener stackoverflow.com/a/9251864/7491839
+					var new_element = old_element.cloneNode(true);
+					old_element.parentNode.replaceChild(new_element, old_element);
+					
+					activeTurn = activeTurn == 1 ? 2 : 1;
+					activeTurn = localStorage.setItem("activeTurn", activeTurn);
+					gameTurnReady(activeTurn);
+				});
+			}
+			
 		    tableRow.append(tableData);
 		}
 		table.append(tableRow);
@@ -123,7 +162,7 @@ function processShips(player) {
 			alert ("No valid regex found.");
 			return false;
     	}
-		alert("Player " + player + " success?");
+		alert("Player " + player + " success ?");
 		
 		for (var i = 0; i < inputArr.length; i++) {
     		positions[i] = inputArr[i];
@@ -139,12 +178,16 @@ function processShips(player) {
 	} else if ((player == 2) && (success == true)) {
 		document.getElementById("player"+player+"input").style.display = "none";
 		document.getElementById("player1").style.display = "block";  // change to game method
-		localStorage.setItem("GameInProgress", inProgress);
-		localStorage.setItem("ActiveTurn", activeTurn);
+		
+		localStorage.setItem("GameInProgress", true);
+		localStorage.setItem("activeTurn", activeTurn);
+		
+		buildOceans();
+		gameTurnReady(1);
 	}
 
 	alert("Returning");
-	return false;	// must stay false or form won't work
+	return false;	// must stay false or form will reload
 }
 
 //function regexShip(string, player) {

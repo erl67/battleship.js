@@ -16,6 +16,9 @@ div {
 	padding: 1em;
 	margin: 3em;
 }
+.warn, .board {
+	display: none;
+}
 a {
 	color: inherit;
 	text-decoration: underline;

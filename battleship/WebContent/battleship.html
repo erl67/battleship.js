@@ -41,7 +41,15 @@
     </form>
 </div>
 
-<div id="player1">
+<div id="player1warn" class="warn">Player 1 prepare for attack<br/>
+	<button type="submit" onclick="gameTurn(1);" class="btn">Attack</button><br/>
+</div>
+
+<div id="player2warn" class="warn">Player 2 prepare for attack<br/>
+	<button type="submit" onclick="gameTurn(2);" class="btn">Attack</button><br/>
+</div>
+
+<div id="player1" class="board">
 	<h4 id="player1Name">Player 1</h4>
 	<h6>Enemy</h6>
 	<div id="board1"></div>
@@ -49,7 +57,7 @@
 	<div id="board1a"></div>
 </div>
 
-<div id="player2">
+<div id="player2" class="board">
 	<h4 id="player2Name">Player 2</h4>
 	<div id="board2"></div>
 	<div id="board2a"></div>
@@ -62,18 +70,14 @@
 
 <script type='text/javascript'>
 
-gameBoard('board1', 'board1');
-gameBoard('board1a', 'board1a');
 
-gameBoard('board2','board2');
-gameBoard('board2a','board2a');
-
-intro('intro');
 
 window.onload = function() {
 	colorize(['main']);
 	colorizeText(['main'], true);
 	footerBar();
+	
+	intro('intro');
 };
 	
 

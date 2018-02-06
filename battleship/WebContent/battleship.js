@@ -43,6 +43,7 @@ function intro(obj) {
 		
 }
 
+
 function gameTurnReady (player) {
 	document.getElementById("player1").style.display = "none";
 	document.getElementById("player2").style.display = "none";

@@ -41,14 +41,16 @@ function intro(obj) {
 
 
 function gameTurnReady (player) {
+    window.scrollTo(0, 0);
+
 	document.getElementsByTagName("header")[0].style.display = "none";
 	document.getElementById("player1").style.display = "none";
 	document.getElementById("player2").style.display = "none";
 	
 	if (player == 1) {
-		document.getElementById("player1warn").style.display = "block";
+		document.getElementById("player1warn").style.display = "flex";
 	} else if (player == 2) {
-		document.getElementById("player2warn").style.display = "block";
+		document.getElementById("player2warn").style.display = "flex";
 	}
 }
 
@@ -89,8 +91,8 @@ function gameBoard(output, boardName, player, opponent, event) {
 			tableData.setAttribute("id", "p" + player + "_" + cellString);
 			tableData.setAttribute("class", "ocean" + "_" + event);
 			
-			previousAttack = localStorage.getItem("p" + opponent + "_" + cellString);
-			previousDefense = localStorage.getItem("p" + player + "_" + cellString);
+			previousAttack = localStorage.getItem("p" + player + "_" + cellString);
+			previousDefense = localStorage.getItem("p" + opponent + "_" + cellString);
 			
 			if (event == true) {
 				if (previousAttack == null) {
@@ -129,25 +131,23 @@ function hitBox (obj, player, opponent) {
 //		localStorage.setItem(e.currentTarget.getAttribute("class").charAt(5) + " " + e.currentTarget.innerHTML, "-");
 		localStorage.setItem(e.currentTarget.getAttribute("id"), "-");
 		
-//		var hit = localStorage.getItem(e.currentTarget.getAttribute("class")) != null ? true : false;
-		
 		var hit = localStorage.getItem("p" + opponent + "_" + e.currentTarget.innerHTML) != null ? true : false;
 		
-//		var hit = Math.random() >= 0.5;
+		var hit = Math.random() >= 0.5;
 		
 		if (hit == false) { //need to get class from board name
 			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
 			//document.getElementById("p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#002200");
-			document.querySelectorAll("td.ocean_false#p1_1A").setAttribute("style", "background-color:#cc0000");
+			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#cc00cc");
 		} else {
 			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#cc0000");
 			//document.getElementById("p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#00FF00");
+			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#00FFcc");
 		}
 		
 		var bda = hit == true ? "Direct Hit" : "Miss";
 		
 //		alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.getAttribute("class") + " " + bda);
-//		alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.parentNode.getAttribute("class") + " " + bda);
 		alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.parentNode.getAttribute("class") + " " + bda);
 
 		var old_element = document.getElementById("p" + player + "_" + e.currentTarget.innerHTML);	//remove event listener stackoverflow.com/a/9251864/7491839
@@ -222,27 +222,8 @@ function processShips(player) {
 		gameTurnReady(1);
 	}
 
-	alert("Returning");
 	return false;	// must stay false or form will reload
 }
-
-//function regexShip(string, player) {
-//	var success = true;
-//	var search = new RegExp("abc");
-//	var search2 = new RegExp("abcde");
-//	
-//	alert("Player" + player + " input is: " + input);
-//	
-//	var inputArr = input.split(",");
-//	
-////	if (inputArr.length !== 3) {
-////		alert("Not proper number of positions " + inputArr.length);
-////		success = false;
-////	} 
-//	
-//	success = success == true ? inputArr : false;
-//	return success;
-//}
 
 function getShip(player, ship) {
 	return localStorage.getItem("Player" + player + " " + ship);
@@ -255,7 +236,8 @@ function setShips(player, ship, coords) {
 function resetGame () {
 	if (window.confirm("Click OK to Reset Game")) {
 		localStorage.clear();
-		window.reload();
+	    window.scrollTo(0, 0);
+		location.reload();
 	} else {
 	    // do nothing
 	}

@@ -1,13 +1,10 @@
-/**
- * 
- */
-
 var gameName = "Battleship";
 var boardSize = 10;
 var cols = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
 var ships = ["Aircraft Carrier", "Battleship", "Submarine"];
 var userNames = ["Alice", "Bob"];
 var positions = [0,0,0,0,0,0];
+var scores = [0,0];
 
 var inProgress = localStorage.getItem("GameInProgress") == null ? false : true;
 var activeTurn = localStorage.getItem("activeTurn") == 2 ? 2 : 1;
@@ -45,19 +42,19 @@ function intro(obj) {
 
 
 function gameTurnReady (player) {
+	document.getElementsByTagName("header")[0].style.display = "none";
 	document.getElementById("player1").style.display = "none";
 	document.getElementById("player2").style.display = "none";
-//	alert ("ready player " + player);
+	
 	if (player == 1) {
 		document.getElementById("player1warn").style.display = "block";
 	} else if (player == 2) {
 		document.getElementById("player2warn").style.display = "block";
 	}
-
 }
 
 function gameTurn (player) {
-	alert ("Player " + player + " attacking");
+	console.log ("Player " + player + " attacking");
 	document.getElementById("player"+player+"warn").style.display = "none";
 	document.getElementById("player"+player).style.display = "block";
 }
@@ -72,33 +69,36 @@ function buildOceans() {
 
 function gameBoard(output, boardName, player, opponent, event) {
 	
-	var hit = true; 
+//	var hit = true; 
 	
 	this.name = output;
 	var output = document.getElementById(output);
 	
 	table = document.createElement("table");
+	table.setAttribute("id", boardName);
 
 	for (i = 1; i <= boardSize; i++) {
 		tableRow = document.createElement("tr");
-		tableRow.setAttribute("id", output);
-		//tableRow.setAttribute("id", boardName);
+		tableRow.setAttribute("class", event);
+
 		
 		for (j = 0; j < boardSize; j++) {
 			
 		    tableData = document.createElement("td");
 		    var cellString = i.toString() + cols[j].toString();
 		    tableData.innerHTML = cellString;
-			tableData.setAttribute("id", i.toString() + cols[j].toString());
+			tableData.setAttribute("id", cellString);
 			tableData.setAttribute("class", player);
+//			tableData.setAttribute("class", event);
 			tableData.setAttribute("style", "cursor:pointer");
 			
 			if (event == true){
 				tableData.addEventListener("click", function(e) {
 					
-					localStorage.setItem(e.currentTarget.getAttribute("class")+ " " + e.currentTarget.innerHTML, "-");
+					localStorage.setItem(e.currentTarget.getAttribute("class") + " " + e.currentTarget.innerHTML, "-");
 					
-					var hit = Math.random() >= 0.5;
+					var hit = localStorage.getItem(e.currentTarget.getAttribute("class")) != null ? true : false;
+//					var hit = Math.random() >= 0.5;
 					
 					if (hit == false) { //need to get class from board name
 						document.getElementById(e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
@@ -106,14 +106,17 @@ function gameBoard(output, boardName, player, opponent, event) {
 						document.getElementById(e.currentTarget.innerHTML).setAttribute("style", "background-color:#cc0000");
 					}
 					
-					alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.getAttribute("class"));
+					var bda = hit == true ? "Direct Hit" : "Miss";
+//					alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.getAttribute("class") + " " + bda);
+					alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.parentNode.getAttribute("class") + " " + bda);
 
 					var old_element = document.getElementById(e.currentTarget.innerHTML);	//remove event listener stackoverflow.com/a/9251864/7491839
 					var new_element = old_element.cloneNode(true);
 					old_element.parentNode.replaceChild(new_element, old_element);
 					
 					activeTurn = activeTurn == 1 ? 2 : 1;
-					activeTurn = localStorage.setItem("activeTurn", activeTurn);
+					localStorage.setItem("activeTurn", activeTurn);
+					
 					gameTurnReady(activeTurn);
 				});
 			}
@@ -163,7 +166,7 @@ function processShips(player) {
 			alert ("No valid regex found.");
 			return false;
     	}
-		alert("Player " + player + " success ?");
+		console.log("Player " + player + " success");
 		
 		for (var i = 0; i < inputArr.length; i++) {
     		positions[i] = inputArr[i];
@@ -171,7 +174,7 @@ function processShips(player) {
 		}
     }
     
-    alert (inputArr);
+    console.log (inputArr);
 
 	if ((player == 1) && (success == true)) {
 		document.getElementById("player1input").style.display = "none";
@@ -215,6 +218,15 @@ function getShip(player, ship) {
 
 function setShips(player, ship, coords) {
 	return localStorage.setItem("Player" + player + " " + ship, coords);
+}
+
+function resetGame () {
+	if (window.confirm("Click OK to Reset Game")) {
+		localStorage.clear();
+	} else {
+	    // do nothing
+	}
+	return false;
 }
 
 function gameOver () {

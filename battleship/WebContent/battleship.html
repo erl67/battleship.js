@@ -18,8 +18,11 @@
 </head>
 
 <body id="main">
+
+<header>
 <h3 title="click to recolor" onclick="reColor('noise', 'main', true);">CS1520 Assignment 2</h3>
 <h4><span id="intro"></span></h4>
+</header>
 
 <div id="player1input" class="initialInput">
 <h5>Player 1, enter your ship positions</h5>
@@ -65,7 +68,7 @@
  
 
 <footer id="noise" title="change innerHTML for color hash">
-	<button type="submit" onclick="localStorage.clear();" class="btn">Reset</button><br/>
+	<button type="submit" onclick="return resetGame();" class="btnReset">Reset</button><br/>
 </footer>
 
 <script type='text/javascript'>

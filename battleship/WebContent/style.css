@@ -16,6 +16,11 @@ div {
 	padding: 1em;
 	margin: 3em;
 }
+.btnReset {
+	padding: .5em;
+	margin-top: 5em;
+	background-color: rgba(196, 68, 68, 0.9);
+}
 .warn, .board {
 	display: none;
 }

@@ -36,8 +36,7 @@ function intro(obj) {
 		document.getElementById("player2").style.display = "none";
 	}
 	
-	
-		
+	document.cookie += userNames + "," + scores;
 }
 
 
@@ -79,54 +78,87 @@ function gameBoard(output, boardName, player, opponent, event) {
 
 	for (i = 1; i <= boardSize; i++) {
 		tableRow = document.createElement("tr");
-		tableRow.setAttribute("class", event);
-
+		tableRow.setAttribute("class", player);
 		
 		for (j = 0; j < boardSize; j++) {
 			
 		    tableData = document.createElement("td");
 		    var cellString = i.toString() + cols[j].toString();
 		    tableData.innerHTML = cellString;
-			tableData.setAttribute("id", cellString);
-			tableData.setAttribute("class", player);
-//			tableData.setAttribute("class", event);
-			tableData.setAttribute("style", "cursor:pointer");
+		    
+			tableData.setAttribute("id", "p" + player + "_" + cellString);
+			tableData.setAttribute("class", "ocean" + "_" + event);
 			
-			if (event == true){
-				tableData.addEventListener("click", function(e) {
-					
-					localStorage.setItem(e.currentTarget.getAttribute("class") + " " + e.currentTarget.innerHTML, "-");
-					
-					var hit = localStorage.getItem(e.currentTarget.getAttribute("class")) != null ? true : false;
-//					var hit = Math.random() >= 0.5;
-					
-					if (hit == false) { //need to get class from board name
-						document.getElementById(e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
-					} else {
-						document.getElementById(e.currentTarget.innerHTML).setAttribute("style", "background-color:#cc0000");
-					}
-					
-					var bda = hit == true ? "Direct Hit" : "Miss";
-//					alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.getAttribute("class") + " " + bda);
-					alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.parentNode.getAttribute("class") + " " + bda);
-
-					var old_element = document.getElementById(e.currentTarget.innerHTML);	//remove event listener stackoverflow.com/a/9251864/7491839
-					var new_element = old_element.cloneNode(true);
-					old_element.parentNode.replaceChild(new_element, old_element);
-					
-					activeTurn = activeTurn == 1 ? 2 : 1;
-					localStorage.setItem("activeTurn", activeTurn);
-					
-					gameTurnReady(activeTurn);
-				});
+			previousAttack = localStorage.getItem("p" + opponent + "_" + cellString);
+			previousDefense = localStorage.getItem("p" + player + "_" + cellString);
+			
+			if (event == true) {
+				if (previousAttack == null) {
+					tableData.setAttribute("style", "cursor:pointer");
+					hitBox (tableData, player, opponent);
+				} else if (previousAttack == "-") {
+					tableData.setAttribute("style", "background-color:#c0c0c0");
+				} else if ((previousAttack == "A") || (previousAttack == "B") || (previousAttack == "S")) {
+					tableData.setAttribute("style", "background-color:#dd00c0");
+				}
+			} else if (event == false) {
+				if (previousDefense == null) {
+				} else if (previousDefense == "-") {
+					tableData.setAttribute("style", "background-color:#e0e0e0");
+				} else if (previousDefense == "A") {
+					tableData.innerHTML = previousDefense.toString();
+				} else if (previousDefense == "B") {
+					tableData.innerHTML = previousDefense.toString();
+					Object.assign(tableData.style,{"background-color":"#FF0000", "text":"#c0c0c0"});
+				} else if (previousDefense == "S") {
+					tableData.innerHTML = previousDefense.toString();
+					Object.assign(tableData.style,{"background-color":"#FF0000", "text":"#c0c0c0"});
+				}
 			}
 			
 		    tableRow.append(tableData);
 		}
 		table.append(tableRow);
-		
 	}
 	output.append(table);
+}
+
+function hitBox (obj, player, opponent) {
+	obj.addEventListener("click", function(e) {
+		
+//		localStorage.setItem(e.currentTarget.getAttribute("class").charAt(5) + " " + e.currentTarget.innerHTML, "-");
+		localStorage.setItem(e.currentTarget.getAttribute("id"), "-");
+		
+//		var hit = localStorage.getItem(e.currentTarget.getAttribute("class")) != null ? true : false;
+		
+		var hit = localStorage.getItem("p" + opponent + "_" + e.currentTarget.innerHTML) != null ? true : false;
+		
+//		var hit = Math.random() >= 0.5;
+		
+		if (hit == false) { //need to get class from board name
+			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
+			//document.getElementById("p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#002200");
+			document.querySelectorAll("td.ocean_false#p1_1A").setAttribute("style", "background-color:#cc0000");
+		} else {
+			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#cc0000");
+			//document.getElementById("p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#00FF00");
+		}
+		
+		var bda = hit == true ? "Direct Hit" : "Miss";
+		
+//		alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.getAttribute("class") + " " + bda);
+//		alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.parentNode.getAttribute("class") + " " + bda);
+		alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.parentNode.getAttribute("class") + " " + bda);
+
+		var old_element = document.getElementById("p" + player + "_" + e.currentTarget.innerHTML);	//remove event listener stackoverflow.com/a/9251864/7491839
+		var new_element = old_element.cloneNode(true);
+		old_element.parentNode.replaceChild(new_element, old_element);
+		
+		activeTurn = activeTurn == 1 ? 2 : 1;
+		localStorage.setItem("activeTurn", activeTurn);
+		
+		gameTurnReady(activeTurn);
+	});
 }
 
 function regexShip(input, player) {
@@ -223,6 +255,7 @@ function setShips(player, ship, coords) {
 function resetGame () {
 	if (window.confirm("Click OK to Reset Game")) {
 		localStorage.clear();
+		window.reload();
 	} else {
 	    // do nothing
 	}

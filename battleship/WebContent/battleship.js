@@ -3,11 +3,14 @@ var boardSize = 10;
 var cols = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
 var ships = ["Aircraft Carrier", "Battleship", "Submarine"];
 var userNames = ["Alice", "Bob"];
-var positions = [0,0,0,0,0,0];
+var strength = [543, 543];
+//var positions = [0,0,0,0,0,0];
 var scores = [0,0];
+var ocean = ["🌊", "🏊", "🏄", "🤽", "⛵", "🐟", "🐡", "🦀", "🦈", "🐋", "🐳", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]
 
 var inProgress = localStorage.getItem("GameInProgress") == null ? false : true;
 var activeTurn = localStorage.getItem("activeTurn") == 2 ? 2 : 1;
+inProgress = localStorage.getItem("GameInProgress") == null ? false : true;
 
 function intro(obj) {
 	document.getElementById(obj).append("Welcome to " + gameName);
@@ -19,12 +22,12 @@ function intro(obj) {
 		document.getElementById("player2").style.display = "none";
 		userNames[0] = localStorage.getItem("Player1");
 		userNames[1] = localStorage.getItem("Player2");
-		positions[0] = localStorage.getItem("Player1 Aircraft Carrier");
-		positions[1] = localStorage.getItem("Player1 Battleship");
-		positions[2] = localStorage.getItem("Player1 Submarine");
-		positions[3] = localStorage.getItem("Player2 Aircraft Carrier");
-		positions[4] = localStorage.getItem("Player2 Battleship");
-		positions[5] = localStorage.getItem("Player2 Submarine");
+//		positions[0] = localStorage.getItem("Player1 Aircraft Carrier");
+//		positions[1] = localStorage.getItem("Player1 Battleship");
+//		positions[2] = localStorage.getItem("Player1 Submarine");
+//		positions[3] = localStorage.getItem("Player2 Aircraft Carrier");
+//		positions[4] = localStorage.getItem("Player2 Battleship");
+//		positions[5] = localStorage.getItem("Player2 Submarine");
 		
 		buildOceans();
 		gameTurnReady (activeTurn);
@@ -70,8 +73,6 @@ function buildOceans() {
 
 function gameBoard(output, boardName, player, opponent, event) {
 	
-//	var hit = true; 
-	
 	this.name = output;
 	var output = document.getElementById(output);
 	
@@ -99,14 +100,20 @@ function gameBoard(output, boardName, player, opponent, event) {
 					tableData.setAttribute("style", "cursor:pointer");
 					hitBox (tableData, player, opponent);
 				} else if (previousAttack == "-") {
-					tableData.setAttribute("style", "background-color:#c0c0c0");
+					tableData.setAttribute("style", "background-color:#c0c0c0"); 
+					Object.assign(tableData,{innerHTML: randO()});
 				} else if ((previousAttack == "A") || (previousAttack == "B") || (previousAttack == "S")) {
 					tableData.setAttribute("style", "background-color:#dd00c0");
+					Object.assign(tableData,{innerHTML: "???"});
+				} else if (previousAttack.indexOf('❌') > -1) {
+					Object.assign(tableData.style,{"background-color":"#FF0010"});
+					Object.assign(tableData,{innerHTML: "❌"});
 				}
 			} else if (event == false) {
 				if (previousDefense == null) {
 				} else if (previousDefense == "-") {
-					tableData.setAttribute("style", "background-color:#e0e0e0");
+					tableData.setAttribute("style", "background-color:#c0c0c0");
+					Object.assign(tableData,{innerHTML: null});
 				} else if (previousDefense == "A") {
 					tableData.innerHTML = previousDefense.toString();
 				} else if (previousDefense == "B") {
@@ -128,29 +135,39 @@ function gameBoard(output, boardName, player, opponent, event) {
 function hitBox (obj, player, opponent) {
 	obj.addEventListener("click", function(e) {
 		
-//		localStorage.setItem(e.currentTarget.getAttribute("class").charAt(5) + " " + e.currentTarget.innerHTML, "-");
-		localStorage.setItem(e.currentTarget.getAttribute("id"), "-");
-		
-		var hit = localStorage.getItem("p" + opponent + "_" + e.currentTarget.innerHTML) != null ? true : false;
-		
-		var hit = Math.random() >= 0.5;
-		
-		if (hit == false) { //need to get class from board name
-			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
-			//document.getElementById("p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#002200");
-			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#cc00cc");
-		} else {
-			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#cc0000");
-			//document.getElementById("p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#00FF00");
-			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#00FFcc");
-		}
+		var hit = localStorage.getItem(e.currentTarget.getAttribute("id")) != null ? localStorage.getItem(e.currentTarget.getAttribute("id")) : false;
+		//hit = Math.random() >= 0.5;
 		
 		var bda = hit == true ? "Direct Hit" : "Miss";
-		
-//		alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.getAttribute("class") + " " + bda);
 		alert("You clicked: " + e.currentTarget.innerHTML + " on board: " + e.currentTarget.parentNode.getAttribute("class") + " " + bda);
+		
+		if (hit != false) {
+			localStorage.setItem(e.currentTarget.getAttribute("id"), localStorage.getItem(e.currentTarget.getAttribute("id")) + "❌");
+			var hitType = hit.charAt(0);
+			if (hitType == "A") {
+				
+			} else if (hitType == "B") {
+				
+			} 
+			else if (hitType == "S") {
+				
+			}
+		} else {
+			localStorage.setItem(e.currentTarget.getAttribute("id"), "-");
+		}
 
-		var old_element = document.getElementById("p" + player + "_" + e.currentTarget.innerHTML);	//remove event listener stackoverflow.com/a/9251864/7491839
+		if (hit == false) {
+			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
+			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
+			//document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).innerHTML = randO();
+			e.currentTarget.innerHTML = randO();
+		} else {
+			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#cc0000");
+			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#FF0010");
+			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).innerHTML = "❌";
+		}
+		
+		var old_element = e.currentTarget;	//remove event listener stackoverflow.com/a/9251864/7491839
 		var new_element = old_element.cloneNode(true);
 		old_element.parentNode.replaceChild(new_element, old_element);
 		
@@ -163,6 +180,9 @@ function hitBox (obj, player, opponent) {
 
 function regexShip(input, player) {
 	var rSuccess = true;
+	var aSearch = new RegExp("/[a]:[A-K](10|[0-9])-[A-K](10|[0-9])/gmi");
+	var bSearch = new RegExp("/[b]:[A-K](10|[0-9])-[A-K](10|[0-9])/gmi");
+	var aSearch = new RegExp("/[s]:[A-K](10|[0-9])-[A-K](10|[0-9])/gmi");
 //	var search = new RegExp("abc");
 //	var search2 = new RegExp("abcde");
 	
@@ -247,4 +267,8 @@ function resetGame () {
 function gameOver () {
 	localStorage.clear();
 	alert ("Game Over");
+}
+
+function randO () {
+	return ocean[Math.floor(Math.random()*ocean.length)];
 }

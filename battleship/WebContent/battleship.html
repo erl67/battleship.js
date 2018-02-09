@@ -30,7 +30,6 @@
        	<input type="text" name="inputName" value="" placeholder="Name" maxlength="20">
     	<input type="text" name="inputShips" value="" placeholder="3 ships">
     	<button type="submit">Submit</button>
-<!--     	<input type="submit" id="btnEnter" name="btnEnter" value="Submit"  onclick="processShips(1);"> -->
     </form>
 </div>
 
@@ -40,15 +39,18 @@
         <input type="text" name="inputName2" value="" placeholder="Name" maxlength="20">
     	<input type="text" name="inputShips2" value="" placeholder="3 ships">
     	<button type="submit">Submit</button>
-<!--     	<input type="submit" id="btnEnter2" name="btnEnter2" value="Submit"> -->
     </form>
 </div>
-
-<div id="player1warn" class="warn">Player 1 prepare for attack<br/>
+   
+<div id="player1warn" class="warn">
+	<h4 id="player1NameB"></h4>
+	<p>Player 1 prepare for attack</p>
 	<button type="submit" onclick="gameTurn(1);" class="btn">Attack</button><br/>
 </div>
 
-<div id="player2warn" class="warn">Player 2 prepare for attack<br/>
+<div id="player2warn" class="warn">
+	<h4 id="player2NameB"></h4>
+	<p>Player 2 prepare for attack</p>
 	<button type="submit" onclick="gameTurn(2);" class="btn">Attack</button><br/>
 </div>
 
@@ -68,24 +70,21 @@
 	<div id="board2a"></div>
 </div>
  
-
-<footer id="noise" title="change innerHTML for color hash">
+<footer id="noise">
 	<button type="submit" onclick="return resetGame();" class="btnReset">Reset</button><br/>
+	<button type="submit" onclick="return viewScores('highScores');" class="btnScores">View Top Scores</button><br/>
 </footer>
 
+<div id="scores"></div>
+<div id="highScores"></div>
+
 <script type='text/javascript'>
-
-
-
 window.onload = function() {
 	colorize(['main']);
 	colorizeText(['main'], true);
-	footerBar();
-	
+	//footerBar();
 	intro('intro');
 };
-	
-
 </script>
 
 </body>

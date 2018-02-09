@@ -3,8 +3,7 @@ html, body {
 	padding: .1em;
 	width: 75%;
 	padding-bottom: 0;
-}
-#main {
+	background-color: rgba(77, 142, 207, 0.7);
 	text-align: center;
 }
 div {
@@ -21,11 +20,16 @@ div {
 	margin-top: 5em;
 	background-color: rgba(196, 68, 68, 0.9);
 }
-.warn, .board {
+.btnScores {
+	padding: .5em;
+	margin-top: 2em;
+	background-color: buttonface;
+}
+.warn, .board, #highScores, #scores {
 	display: none;
 }
 /* stackoverflow.com/a/48030340/7491839 */
-.warn {
+.warn, #highScores {
   display: none;
   flex-direction: column;
   justify-content: center;
@@ -52,8 +56,10 @@ table, td {
 }
 td {
 	border:3px ridge #29e1fd;
+	min-height: 35px;
+	min-width: 35px;
 }
 footer {
-	height: 1000px;
+	height: 0px;
 }
 

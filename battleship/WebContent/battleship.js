@@ -20,8 +20,14 @@ function intro(obj) {
 		document.getElementById("player2input").style.display = "none";
 		document.getElementById("player1").style.display = "none";
 		document.getElementById("player2").style.display = "none";
+		
 		userNames[0] = localStorage.getItem("Player1");
 		userNames[1] = localStorage.getItem("Player2");
+		document.getElementById("player1Name").innerHTML = userNames[0];
+		document.getElementById("player2Name").innerHTML = userNames[1];
+		document.getElementById("player1NameB").innerHTML = userNames[0];
+		document.getElementById("player2NameB").innerHTML = userNames[1];
+		
 //		positions[0] = localStorage.getItem("Player1 Aircraft Carrier");
 //		positions[1] = localStorage.getItem("Player1 Battleship");
 //		positions[2] = localStorage.getItem("Player1 Submarine");
@@ -39,7 +45,8 @@ function intro(obj) {
 		document.getElementById("player2").style.display = "none";
 	}
 	
-	document.cookie += userNames + "," + scores;
+//	document.cookie += userNames[0] + "," + scores[0] + "," + userNames[1] + "," + scores[1] + ",";
+	document.cookie += userNames[0] + "," + randO() + "," + userNames[1] + "," + randO() + ",";
 }
 
 
@@ -111,9 +118,10 @@ function gameBoard(output, boardName, player, opponent, event) {
 				}
 			} else if (event == false) {
 				if (previousDefense == null) {
+					//do nothing
 				} else if (previousDefense == "-") {
-					tableData.setAttribute("style", "background-color:#c0c0c0");
-					Object.assign(tableData,{innerHTML: null});
+					tableData.setAttribute("style", "background-color:#a0c0c0");
+					tableData.innerHTML = randO();
 				} else if (previousDefense == "A") {
 					tableData.innerHTML = previousDefense.toString();
 				} else if (previousDefense == "B") {
@@ -159,7 +167,7 @@ function hitBox (obj, player, opponent) {
 		if (hit == false) {
 			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
 			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
-			//document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).innerHTML = randO();
+			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).innerHTML = " ";
 			e.currentTarget.innerHTML = randO();
 		} else {
 			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#cc0000");
@@ -191,7 +199,8 @@ function regexShip(input, player) {
 	var inputArr = input.split(",");
 	
 	rSuccess = rSuccess == true ? inputArr : false;
-	return rSuccess;
+//	return rSuccess;
+	return false;
 }
 
 function processShips(player) {
@@ -199,11 +208,11 @@ function processShips(player) {
 
 	if (player == 1) {
 		var input = document.inputForm.inputShips.value;
-		userNames[0] = document.inputForm.inputName.value;
+		userNames[0] = document.inputForm.inputName.value != null ? document.inputForm.inputName.value : "Alice";
 		localStorage.setItem("Player1", userNames[0]);
 	} else if (player == 2) {
 		var input = document.inputForm2.inputShips2.value;
-		userNames[1] = document.inputForm2.inputName2.value;
+		userNames[1] = document.inputForm2.inputName2.value != null ? document.inputForm2.inputName2.value : "Bob";
 		localStorage.setItem("Player2", userNames[1]);
 	}
 		
@@ -212,7 +221,8 @@ function processShips(player) {
 		alert ("Not valid starting positions.");
 		return false;
     } else {
-    	var inputArr = regexShip (input, player);
+//    	var inputArr = regexShip (input, player);
+    	var inputArr = true;
     	if (inputArr == false) {
 			success = false;
 			alert ("No valid regex found.");
@@ -238,8 +248,11 @@ function processShips(player) {
 		localStorage.setItem("GameInProgress", true);
 		localStorage.setItem("activeTurn", activeTurn);
 		
-		buildOceans();
-		gameTurnReady(1);
+	    window.scrollTo(0, 0); //reload to update names using inProgress
+		location.reload();
+		
+		//buildOceans();
+		//gameTurnReady(1);
 	}
 
 	return false;	// must stay false or form will reload
@@ -262,6 +275,50 @@ function resetGame () {
 	    // do nothing
 	}
 	return false;
+}
+
+function viewScores(output) {
+	if (document.getElementById("noise").innerHTML.length > 5){ break;};
+
+	var scores = document.cookie;
+	scores = scores.split(",");
+	score = scores.splice(-1,1);
+	
+	table = document.createElement("table");
+	table.setAttribute("id", "score board");
+
+	for (i=0; i < scores.length; i+=4) {
+		tableRow = document.createElement("tr");
+
+		console.log(scores[i] + " " + scores[i+1] + " " + scores[i+2] + " " + scores[i+3]);
+		for (j=0; j < 4; j++) {
+			tableData = document.createElement("td");
+		    tableData.innerHTML = scores[i+j];
+		    tableRow.append(tableData);
+		}
+	table.append(tableRow);
+	}
+	
+	var button = document.createElement("button");
+	button.setAttribut("id", "btnScores");
+	button.innerHTML = "Return to Game";
+	button.addEventListener ("click", function() {
+		document.getElementById("noise").style.display = "none";
+		document.getElementById("noise").innerHTML = "";
+	    window.scrollTo(0, 0);
+		location.reload();
+	});
+	
+	document.getElementById(output).append(button);
+	document.getElementById(output).append(table);
+	
+	document.getElementById("player1input").style.display = "none";
+	document.getElementById("player2input").style.display = "none";
+	document.getElementById("player1").style.display = "none";
+	document.getElementById("player2").style.display = "none";
+	document.getElementById("noise").style.display = "none";
+	
+	document.getElementById(output).style.display = "block";
 }
 
 function gameOver () {

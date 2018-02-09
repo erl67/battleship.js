@@ -69,14 +69,21 @@
 	<h6>Friendly</h6>
 	<div id="board2a"></div>
 </div>
+
+<div id="scores">
+	<h6>
+		<span id="player1NameC"></span>-<span id="player1Score"></span>
+		<span id="player2NameC"></span>-<span id="player2Score"></span>
+	</h6>
+</div>
+
+<div id="highScores"></div>
  
 <footer id="noise">
 	<button type="submit" onclick="return resetGame();" class="btnReset">Reset</button><br/>
 	<button type="submit" onclick="return viewScores('highScores');" class="btnScores">View Top Scores</button><br/>
 </footer>
 
-<div id="scores"></div>
-<div id="highScores"></div>
 
 <script type='text/javascript'>
 window.onload = function() {

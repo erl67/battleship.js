@@ -25,7 +25,7 @@ div {
 	margin-top: 2em;
 	background-color: buttonface;
 }
-.warn, .board, #highScores, #scores {
+.warn, .board, #highScores {
 	display: none;
 }
 /* stackoverflow.com/a/48030340/7491839 */
@@ -59,6 +59,20 @@ td {
 	min-height: 35px;
 	min-width: 35px;
 }
+.open {
+	cursor: crosshair;
+}
+.ship {
+	border: 2px dashed #29e1fd;
+}
+.miss {
+	background-color: #a0c0c0;
+	border: none;
+}
+.hit {
+	background-color:rgba(178, 76, 76, 0.5);
+}
+
 footer {
 	height: 0px;
 }

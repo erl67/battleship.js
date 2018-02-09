@@ -2,27 +2,25 @@ var gameName = "Battleship";
 var boardSize = 10;
 var cols = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
 var ships = ["Aircraft Carrier", "Battleship", "Submarine"];
+var shipTypes = ["A", "B", "S"];
 var userNames = ["Alice", "Bob"];
-//var strength = [543, 543];
-//var scores = [0,0];
-//var scores[0] = {5,4,3};
-var scores = [5,4,3,5,4,3];
+var scores = [0,0];
+var health = [5,4,3,5,4,3];
 var ocean = ["🌊", "🏊", "🏄", "🤽", "⛵", "🐟", "🐡", "🦀", "🦈", "🐋", "🐳", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]
 
 var inProgress = localStorage.getItem("GameInProgress") == null ? false : true;
 var activeTurn = localStorage.getItem("activeTurn") == 2 ? 2 : 1;
 
-//scores[0] = localStorage.getItem("score1") == null ? 0 : localStorage.getItem("score1");
-//scores[1] = localStorage.getItem("score2") == null ? 0 : localStorage.getItem("score2");
-scores = JSON.parse(localStorage.getItem("names")) == null ? [5,4,3,5,4,3] : JSON.parse(localStorage.getItem("scores"));
+health = JSON.parse(localStorage.getItem("health")) == null ? health : JSON.parse(localStorage.getItem("health"));
 userNames[0] = localStorage.getItem("Player1") == null ? "Player 1" : localStorage.getItem("Player1");
-userNames[0] = localStorage.getItem("Player2") == null ? "Player 2" : localStorage.getItem("Player2");
+userNames[1] = localStorage.getItem("Player2") == null ? "Player 2" : localStorage.getItem("Player2");
 
 function intro(obj) {
 	document.getElementById(obj).append("Welcome to " + gameName);
 	
 	if (inProgress == true) {
 		blankScreen();
+		health = localStorage.getItem("health") == null ? health : JSON.parse(localStorage.getItem("health"));
 
 		document.getElementById("player1Name").innerHTML = userNames[0];
 		document.getElementById("player2Name").innerHTML = userNames[1];
@@ -43,7 +41,7 @@ function intro(obj) {
 	}
 	
 //	document.cookie += userNames[0] + "," + scores[0] + "," + userNames[1] + "," + scores[1] + ",";
-	document.cookie += userNames[0] + "," + randO() + "," + userNames[1] + "," + randO() + ",";
+//	document.cookie += userNames[0] + "," + randO() + "," + userNames[1] + "," + randO() + ",";
 }
 
 
@@ -76,11 +74,14 @@ function buildOceans() {
 
 function gameBoard(output, boardName, player, opponent, event) {
 	
-	this.name = output;
 	var output = document.getElementById(output);
 	
 	table = document.createElement("table");
 	table.setAttribute("id", boardName);
+	caption = document.createElement("caption");
+	caption.innerHTML = event == true ? "<b>Enemy</b>" : "<b>Friendly</b>";
+	this.name = event == true ? table.setAttribute("class", "enemy") : table.setAttribute("class", "friendly");
+	table.appendChild(caption);
 
 	for (i = 1; i <= boardSize; i++) {
 		tableRow = document.createElement("tr");
@@ -89,7 +90,7 @@ function gameBoard(output, boardName, player, opponent, event) {
 		for (j = 0; j < boardSize; j++) {
 			
 		    tableData = document.createElement("td");
-		    var cellString = i.toString() + cols[j].toString();
+		    var cellString = cols[j].toString() + i.toString();
 		    tableData.innerHTML = cellString;
 		    
 			tableData.setAttribute("id", "p" + player + "_" + cellString);
@@ -103,27 +104,17 @@ function gameBoard(output, boardName, player, opponent, event) {
 			
 			if (event == true) {
 				if (previousAttack == null) {
-					//tableData.setAttribute("style", "cursor:pointer");
-					//tableData.setAttribute("class", "open");
 					tableData.classList.add("open");
 					hitBox (tableData, player, opponent);
 				} else if (previousAttack == "-") {
-					//tableData.setAttribute("class", "miss");
-					//tableData.setAttribute("style", "background-color:#a0a0a0");
 					tableData.classList.add("miss");
 					Object.assign(tableData,{innerHTML: randO()});
 				} else if (shipAttack != null) {
 					//tableData.innerHTML = shipAttack;
-					//tableData.setAttribute("style", "background-color:#00FFFF");
-					//Object.assign(tableData.style,{"background-color":"#FF0010"});
-					//tableData.setAttribute("class", "hit");
 					tableData.classList.add("hit");
-
 					Object.assign(tableData,{innerHTML: "❌"});
 				} else if (previousAttack.indexOf('❌') > -1) {
-					//tableData.setAttribute("class", "hit");
 					tableData.classList.add("hit");
-					//Object.assign(tableData.style,{"background-color":"#e900ff"});
 					Object.assign(tableData,{innerHTML: "❌❌❌"});
 				}
 			} else if (event == false) {
@@ -131,21 +122,13 @@ function gameBoard(output, boardName, player, opponent, event) {
 					if (shipDefend != null) {
 						tableData.innerHTML = shipDefend;
 						tableData.classList.add("ship");
-						//tableData.setAttribute("class", "ship");
-						//tableData.setAttribute("style", "background-color:#FF00FF");
-						//tableData.style.border = "2px dashed #29e1fd";
 					}
 				} else if (previousDefense == "-") {
 					tableData.classList.add("miss");
-					//tableData.setAttribute("class", "miss");
-					//tableData.setAttribute("style", "background-color:#a0c0c0");
-					//tableData.setAttribute("style", "border:none");
 					tableData.innerHTML = randO();
 				} else if (previousDefense.indexOf('❌') > -1) {
 					tableData.classList.add("hit");
-					//tableData.setAttribute("class", "hit");
 					tableData.innerHTML = previousDefense.toString();
-					//tableData.setAttribute("style", "background-color:rgba(178, 76, 76, 0.5)");
 				}
 			}
 		    tableRow.append(tableData);
@@ -158,9 +141,8 @@ function gameBoard(output, boardName, player, opponent, event) {
 function hitBox (obj, player, opponent) {
 	obj.addEventListener("click", function(e) {
 		
-//		var hit = localStorage.getItem(e.currentTarget.getAttribute("id")) != null ? localStorage.getItem(e.currentTarget.getAttribute("id")) : false;
 		//hit = Math.random() >= 0.5;
-		var health;
+		//var index = opponent == 2 ? 0 : 1;
 		
 		var hit = localStorage.getItem(opponent+"z"+e.currentTarget.innerHTML) != null ? localStorage.getItem(opponent+"z"+e.currentTarget.innerHTML) : null;
 		var bda = hit != null ? "Direct Hit" : "Miss";
@@ -169,42 +151,37 @@ function hitBox (obj, player, opponent) {
 		
 		if (hit != null) {
 			localStorage.setItem(e.currentTarget.getAttribute("id"), "❌");
-			health = localStorage.getItem("Health"+opponent);
 			var hitType = hit.substring(1).charAt(0);
 			
 			if (hitType == "A") {
-				scores[0 + (opponent-1)]--;
-				localStorage.setItem("Health"+opponent, health);
-				if (health == 0) {
-					alert ("You sunk " + userNames(opponent-1) + "'s aircraft carrier");
-				}
+				health[3 * (opponent-1) + 0] = health[3 * (opponent-1) + 0] - 1;
+				if (health[3 * (opponent-1) + 0]==0) alert ("You sank " + userNames[opponent-1] + "'s aircraft carrier");
 			} else if (hitType == "B") {
-				scores[1 + (opponent-1)]--;
-
+				health[3 * (opponent-1) + 1] = health[3 * (opponent-1) + 1] - 1;
+				if (health[3 * (opponent-1) + 1]==0) alert ("You sank " + userNames[opponent-1] + "'s battleship");
 			} 
 			else if (hitType == "S") {
-				scores[2 + (opponent-1)]--;
-
+				health[3 * (opponent-1) + 2] = health[3 * (opponent-1) + 2] - 1;
+				if (health[3 * (opponent-1) + 2]==0) alert ("You sank " + userNames[opponent-1] + "'s submarine");
 			}
-//			scores[player-1] += 2;
 			updateScores();
+			
+			if (document.getElementById("player2Score").innerHTML == 24 || document.getElementById("player1Score").innerHTML == 24) gameOver();
+			
 		} else {
 			localStorage.setItem(e.currentTarget.getAttribute("id"), "-");
 		}
 
 		if (hit == null) {
-			//document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
-			//document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#c0c0c0");
 			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).classList.add("miss");
 			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).classList.add("miss");
 			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).innerHTML = " ";
 			e.currentTarget.innerHTML = randO();
 		} else {
-			//document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#cc0000");
-			//document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).setAttribute("style", "background-color:#FF0010");
 			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).classList.add("hit");
 			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).classList.add("hit");
 			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).innerHTML = "❌";
+			e.currentTarget.innerHTML = "❌";
 		}
 		
 		var old_element = e.currentTarget;	//remove event listener stackoverflow.com/a/9251864/7491839
@@ -238,20 +215,33 @@ function regexShip(input, player) {
 	
 	shipType="A";
 	
-	if (shipType == "A") {
-		for (i = 0; i < 5; i++) {
-			localStorage.setItem(player + "z" + (v+i)+h, player + "A" + (i+1));
+	for (x=0; x<shipTypes.length; x++) {
+		shipType = shipTypes[x];
+		
+		if (shipType == "A") {
+			orientation = 0; //vertical(numbers), 1=horizontal(letters)
+			v = 3;
+			h = cols[3];
+			for (i = 0; i < 5; i++) {
+				localStorage.setItem(player + "z" + (v+i)+h, player + "A" + (i+1));
+			}
+		} else if (shipType == "B") {
+			orientation = 1; //vertical(numbers), 1=horizontal(letters)
+			v = 5;
+			h = cols[5];
+			for (i = 0; i < 4; i++) {
+				localStorage.setItem(player + "z" + (v+i)+h, player + "B" + (i+1));
+			}
+		} else if (shipType == "S") {
+			orientation = 0; //vertical(numbers), 1=horizontal(letters)
+			v = 8;
+			h = cols[9];
+			for (i = 0; i < 3; i++) {
+				localStorage.setItem(player + "z" + (v+i)+h, player + "S" + (i+1));
+			}
+		} else {
+			return false;
 		}
-	} else if (shipType == "B") {
-		for (i = 0; i < 5; i++) {
-			localStorage.setItem(player + "z" + (v+i)+h, player + "A" + (i+1));
-		}
-	} else if (shipType == "S") {
-		for (i = 0; i < 5; i++) {
-			localStorage.setItem(player + "z" + (v+i)+h, player + "A" + (i+1));
-		}
-	} else {
-		return false;
 	}
 //	return rSuccess;
 	return false;
@@ -300,8 +290,6 @@ function processShips(player) {
 		
 		localStorage.setItem("GameInProgress", true);
 		localStorage.setItem("activeTurn", activeTurn);
-		localStorage.setItem("Health1", [5,4,3]);
-		localStorage.setItem("Health2", [5,4,3]);
 
 	    window.scrollTo(0, 0); //reload to update names using inProgress
 		location.reload();
@@ -324,7 +312,7 @@ function viewScores(output) {
 
 	var scores = document.cookie;
 	scores = scores.split(",");
-	score = scores.splice(-1,1);
+	score = scores.splice(-1,1); //remove last comma
 	
 	table = document.createElement("table");
 	table.setAttribute("id", "score board");
@@ -371,11 +359,23 @@ function blankScreen(){
 	document.getElementsByTagName("footer")[0].style.display = "none";
 }
 
-function gameOver () {
-	document.cookie += userNames[0] + "," + scores[0] + "," + userNames[1] + "," + scores[1] + ",";
+function gameOver () { //not the best way to handle scores but it's easier
+	blankScreen();
+	
+	document.getElementsByTagName("header")[0].style.display = "block";
+	document.getElementsByTagName("footer")[0].style.display = "block";
+	document.getElementById("gameOver").style.display = "block";
 
-	localStorage.clear();
-	alert ("Game Over");
+	var x = document.getElementById("player1Score").innerHTML;
+	var y = document.getElementById("player2Score").innerHTML;
+	
+	var winner = x > y ? userNames[0] : userNames[1];
+	
+	document.getElementById("gameOver").innerHTML = "Game Over</br>The winner is: " + winner;
+	document.cookie += userNames[0] + "," + x + "," + userNames[1] + "," + y + ",";
+
+	alert ("The End");
+	resetGame();
 }
 
 function resetGame () {
@@ -390,11 +390,9 @@ function resetGame () {
 }
 
 function updateScores(){
-	document.getElementById("player2Score").innerHTML = 24 - (scores[0] + scores [1] + scores [2]);
-	document.getElementById("player1Score").innerHTML = 24 - (scores[3] + scores [4] + scores [5]);
-//	localStorage.setItem("score1", scores[0]);
-//	localStorage.setItem("score2", scores[1]);
-	localStorage.setItem("scores", JSON.stringify(scores));
+	document.getElementById("player2Score").innerHTML = 24 - 2 * (health[0] + health[1] + health[2]);
+	document.getElementById("player1Score").innerHTML = 24 - 2 * (health[3] + health[4] + health[5]);
+	localStorage.setItem("health", JSON.stringify(health));
 	document.getElementById("scores").style.display = "block";
 }
 

@@ -1,17 +1,14 @@
 var gameName = "Battleship";
 var boardSize = 10;
 var cols = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
-var inputArr;
 var ships = ["Aircraft Carrier", "Battleship", "Submarine"];
 var shipTypes = ["A", "B", "S"];
-var userNames = ["Alice", "Bob"];
-var scores = [0,0];
+var userNames = ["", ""];
 var health = [5,4,3,5,4,3];
 
 var inProgress = localStorage.getItem("GameInProgress") == null ? false : true;
 var activeTurn = localStorage.getItem("activeTurn") == 2 ? 2 : 1;
 
-health = JSON.parse(localStorage.getItem("health")) == null ? health : JSON.parse(localStorage.getItem("health"));
 userNames[0] = localStorage.getItem("Player1") == null ? "Player 1" : localStorage.getItem("Player1");
 userNames[1] = localStorage.getItem("Player2") == null ? "Player 2" : localStorage.getItem("Player2");
 
@@ -43,19 +40,12 @@ function intro(obj) {
 }
 
 function gameTurnReady (player) {
-    window.scrollTo(0, 0);
     blankScreen();
 	document.getElementsByTagName("footer")[0].style.display = "block";
-	
-	if (player == 1) {
-		document.getElementById("player1warn").style.display = "flex";
-	} else if (player == 2) {
-		document.getElementById("player2warn").style.display = "flex";
-	}
+	document.getElementById("player"+player+"warn").style.display = "flex";
 }
 
 function gameTurn (player) {
-	console.log ("Player " + player + " attacking");
 	document.getElementById("player"+player+"warn").style.display = "none";
 	document.getElementById("player"+player).style.display = "block";
 	document.getElementById("scores").style.display = "block";
@@ -124,6 +114,7 @@ function gameBoard(output, boardName, player, opponent, event) {
 					tableData.classList.add("miss");
 					tableData.innerHTML = randO();
 				} else if (previousDefense.indexOf('❌') > -1) {
+					tableData.classList.add("ship");
 					tableData.classList.add("hit");
 					tableData.innerHTML = previousDefense.toString();
 				}
@@ -138,13 +129,14 @@ function gameBoard(output, boardName, player, opponent, event) {
 function hitBox (obj, player, opponent) {
 	obj.addEventListener("click", function(e) {
 		
-		//hit = Math.random() >= 0.5;
+		if (activeTurn != player) {alert("Not your turn. Refresh for next player."); return false};
 		
-		var hit = localStorage.getItem(opponent+"z"+e.currentTarget.innerHTML) != null ? localStorage.getItem(opponent+"z"+e.currentTarget.innerHTML) : null;
+		var target = e.currentTarget.innerHTML;
+		var hit = localStorage.getItem(opponent+"z"+target); 		//hit = Math.random() >= 0.5;
 		var bda = hit != null ? "Direct Hit" : "Miss";
 		
-		alert("You attacked: " + e.currentTarget.innerHTML + "\n\nBDA as follows: " + bda);
-		
+		document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).classList.remove("open");
+
 		if (hit != null) {
 			localStorage.setItem(e.currentTarget.getAttribute("id"), "❌");
 			var hitType = hit.substring(1).charAt(0);
@@ -161,23 +153,19 @@ function hitBox (obj, player, opponent) {
 				if (health[3 * (opponent-1) + 2]==0) alert ("You sank " + userNames[opponent-1] + "'s Submarine");
 			}
 			
-			updateScores();
-			if (document.getElementById("player2Score").innerHTML == 24 || document.getElementById("player1Score").innerHTML == 24) gameOver();
-			
-		} else {
-			localStorage.setItem(e.currentTarget.getAttribute("id"), "-");
-		}
-
-		if (hit == null) {
-			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).classList.add("miss");
-			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).classList.add("miss");
-			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).innerHTML = " ";
-			e.currentTarget.innerHTML = randO();
-		} else {
 			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).classList.add("hit");
 			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).classList.add("hit");
 			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).innerHTML = "❌";
 			e.currentTarget.innerHTML = "❌";
+			
+			updateScores();
+			if (document.getElementById("player2Score").innerHTML == 24 || document.getElementById("player1Score").innerHTML == 24) gameOver();
+		} else if (hit == null) {
+			document.getElementById("p" + player + "_" + e.currentTarget.innerHTML).classList.add("miss");
+			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).classList.add("miss");
+			document.querySelector("td.ocean_false#p" + opponent + "_" + e.currentTarget.innerHTML).innerHTML = " ";
+			localStorage.setItem(e.currentTarget.getAttribute("id"), "-");
+			e.currentTarget.innerHTML = randO();
 		}
 		
 		var old_element = e.currentTarget;	//remove event listener stackoverflow.com/a/9251864/7491839
@@ -187,15 +175,17 @@ function hitBox (obj, player, opponent) {
 		activeTurn = activeTurn == 1 ? 2 : 1;
 		localStorage.setItem("activeTurn", activeTurn);
 		
-		gameTurnReady(activeTurn);
+		if (window.confirm("You attacked: " + target + "\n\nBDA as follows: " + bda + "\n\nClick OK for next player, or cancel to review board")) {
+			gameTurnReady(activeTurn);
+		}
 	});
 }
 
-function regexShip(inputArr, input, player) {
+function regexShip(input, player) {
 	var rSuccess = true;
 	var matched;
 	var searches = [0,0,0];
-	inputArr = [];
+	var inputArr = [];
 
 	searches[0] = /([A]:?\(?[A-K](10|[0-9])-?[A-K](10|[0-9])\)?)/gmi;
 	searches[1] = /([B]:?\(?[A-K](10|[0-9])-?[A-K](10|[0-9])\)?)/gmi;
@@ -207,7 +197,6 @@ function regexShip(inputArr, input, player) {
 		y = input.match(searches[x]);
 		if (y != null) {
 			inputArr[x] = y;
-			console.log(inputArr);
 		} else {
 			rSuccess = false;
 			return false;
@@ -218,81 +207,35 @@ function regexShip(inputArr, input, player) {
 	
 	for (x=0; x < shipTypes.length; x++) {
 		shipType = shipTypes[x];
+				
+		startGrid = startPosition.exec(inputArr[x])[0];
+		endGrid = endPosition.exec(inputArr[x])[0];
 		
-		if (shipType == "A") {  //could optimize this
-			
-			grids = calculateGrid(startPosition.exec(inputArr[x])[0], endPosition.exec(inputArr[x])[0]);
-			
-			startGrid = grids[0];
-			endGrid = grids[1];
-			h = grids[2];
-			hi = grids[3];
-			v = grids[4];
-
-			for (i = 0; i < 5; i++) {
-				value = (orientation == 0 ) ? h + (v+i) : cols[hi+i]+v; 
-				if (localStorage.getItem(player + "z" + value) != null) {localStorage.clear(); return false;};
-				localStorage.setItem(player + "z" + value, player + "A" + (i+1));
+		orientation = startGrid.charAt(0) == endGrid.charAt(0) ? 0 : 1;
+		
+		if (orientation == 0) {
+			if (parseInt(startGrid.substring(1)) > parseInt(endGrid.substring(1))){
+				swap = startGrid;
+				startGrid = endGrid;
+				endGrid = swap;
 			}
-		} else if (shipType == "B") {
-			
-			grids = calculateGrid(startPosition.exec(inputArr[x])[0], endPosition.exec(inputArr[x])[0]);
-			
-			startGrid = grids[0];
-			endGrid = grids[1];
-			h = grids[2];
-			hi = grids[3];
-			v = grids[4];
-
-			for (i = 0; i < 4; i++) {
-				value = (orientation == 0 ) ? h + (v+i) : cols[hi+i]+v; 
-				if (localStorage.getItem(player + "z" + value) != null) {localStorage.clear(); return false;};
-				localStorage.setItem(player + "z" + value, player + "B" + (i+1));
+		} else {
+			if (cols.indexOf(startGrid.charAt(0)) > cols.indexOf(endGrid.charAt(0))){
+				swap = startGrid;
+				startGrid = endGrid;
+				endGrid = swap;
 			}
-		} else if (shipType == "S") {
-			
-			grids = calculateGrid(startPosition.exec(inputArr[x])[0], endPosition.exec(inputArr[x])[0]);
-			
-			startGrid = grids[0];
-			endGrid = grids[1];
-			h = grids[2];
-			hi = grids[3];
-			v = grids[4];
-
-			for (i = 0; i < 3; i++) {
-				value = (orientation == 0 ) ? h + (v+i) : cols[hi+i]+v; 
-				if (localStorage.getItem(player + "z" + value) != null) {localStorage.clear(); return false;};
-				localStorage.setItem(player + "z" + value, player + "S" + (i+1));
-			}
+		}
+		h = startGrid.charAt(0);
+		hi = cols.indexOf(startGrid.charAt(0));
+		v = parseInt(startGrid.substring(1));
+		
+		for (i = 0; i < health[x]; i++) {
+			value = (orientation == 0 ) ? h + (v+i) : cols[hi+i]+v; 
+			if (localStorage.getItem(player + "z" + value) != null) {localStorage.clear(); return false;};
+			localStorage.setItem(player + "z" + value, player + shipType + (i+1));
 		}
 	}
-}
-
-function calculateGrid(startGrid, endGrid) {
-	//alert (startGrid + " - " + endGrid);
-
-	orientation = startGrid.charAt(0) == endGrid.charAt(0) ? 0 : 1;
-	
-	if (orientation == 0) {
-		if (parseInt(startGrid.substring(1)) > parseInt(endGrid.substring(1))){
-			swap = startGrid;
-			startGrid = endGrid;
-			endGrid = swap;
-		}
-	} else {
-		if (cols.indexOf(startGrid.charAt(0)) > cols.indexOf(endGrid.charAt(0))){
-			swap = startGrid;
-			startGrid = endGrid;
-			endGrid = swap;
-		}
-	}
-	h = startGrid.charAt(0);
-	hi = cols.indexOf(startGrid.charAt(0));
-	v = parseInt(startGrid.substring(1));
-	
-	//alert ("v:" + v + " h:" + h + " o:" + orientation + " cols:" + hi);
-	
-	return [startGrid, endGrid, h, hi, v];
 }
 
 function processShips(player) {
@@ -308,57 +251,45 @@ function processShips(player) {
 		localStorage.setItem("Player2", userNames[1]);
 	}
 	
-	if (input.indexOf(',') > -1) inputArr = input.split(",");
-	if (input.indexOf(';') > -1) inputArr = input.split(";");
+	var inputArr = (input.indexOf(';') > -1) ? inputArr = input.split(";") : (input.indexOf(',') > -1) ? inputArr = input.split(",") : null;
 
     if (input == "" || input.length <= 5 || inputArr.length != 3) {
 		success = false;
 		alert ("Not valid starting positions.");
 		return false;
     } else {
-    	
-    	var regex = regexShip (inputArr, input, player);
-    	
+    	var regex = regexShip (input, player);
     	if (regex == false) {
     		success = false;
 			alert ("No valid regex found.");
-		    //window.scrollTo(0, 0);
-			//location.reload();
     	}
-		console.log("Player " + player + " success " + regex);
     }
-    
-    console.log (inputArr);
 
 	if ((player == 1) && (success == true)) {
 		document.getElementById("player1input").style.display = "none";
 		document.getElementById("player2input").style.display = "block";
 	} else if ((player == 2) && (success == true)) {
-		blankScreen();
-		
 		localStorage.setItem("GameInProgress", true);
 		localStorage.setItem("activeTurn", activeTurn);
-
-	    window.scrollTo(0, 0); //reload to update names using inProgress
-		location.reload();
+		inProgress = true;
+		intro('intro');
 	}
 
 	return false;	// must stay false or form will reload
 }
 
 function viewScores(output) {
-    window.scrollTo(0, 0);
 
 	var scores = document.cookie;
 	scores = scores.split(",");
-	score = scores.splice(-1,1); //remove last comma
+	z = scores.splice(-1,1); //remove last comma
+	z = scores.length > 40 ? 40 : scores.length;
 	
 	table = document.createElement("table");
 	table.setAttribute("id", "score board");
 
-	for (i=0; i < scores.length; i+=4) {
+	for (i=0; i < z; i+=4) {
 		tableRow = document.createElement("tr");
-
 		console.log(scores[i] + " " + scores[i+1] + " " + scores[i+2] + " " + scores[i+3]);
 		for (j=0; j < 4; j++) {
 			tableData = document.createElement("td");
@@ -369,7 +300,7 @@ function viewScores(output) {
 	}
 	
 	var button = document.createElement("button");
-	button.setAttribute("id", "btnScores");
+	button.setAttribute("class", "btnScores");
 	button.innerHTML = "Return to Game";
 	button.addEventListener ("click", function() {
 		document.getElementById(output).style.display = "none";
@@ -386,6 +317,7 @@ function viewScores(output) {
 }
 
 function blankScreen(){
+	window.scrollTo(0, 0);
 	document.getElementById("player1input").style.display = "none";
 	document.getElementById("player2input").style.display = "none";
 	document.getElementById("player1warn").style.display = "none";
@@ -433,7 +365,7 @@ function updateScores(){
 	document.getElementById("scores").style.display = "block";
 }
 
-var ocean = ["🌊", "🏊", "🏄", "🤽", "⛵", "🐟", "🐡", "🦀", "🦈", "🐋", "🐳", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]
+var ocean = ["🌊", "🏊", "🏄", "🤽", "⛵", "🐟", "🐡", "🦀", "🦈", "🐋", "🐳", "🌊", "🏊", "🏄", "🤽", "⛵", "🐟", "🐡", "🦀", "🦈", "🐋", "🐳"," ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "🌊","🌊","🌊","🌊","🌊","🌊","🌊"," "]
 function randO () {
 	return ocean[Math.floor(Math.random()*ocean.length)];
 }

@@ -1,8 +1,7 @@
 html, body {
 	margin: 0 auto;
-	padding: .1em;
+	padding: .3em;
 	width: 95%;
-	padding-bottom: 0;
 	background-color: rgba(77, 142, 207, 0.7);
 	text-align: center;
 	color: rgba(255,255,255, 1);
@@ -21,7 +20,7 @@ html, body {
 }
 .btnScores {
 	padding: .5em;
-	margin-top: 2em;
+	margin: 3em;
 	background-color: buttonface;
 }
 header, footer, .warn, .board, .initialInput, #highScores, #gameOver {

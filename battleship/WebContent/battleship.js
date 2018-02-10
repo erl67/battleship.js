@@ -1,6 +1,7 @@
 var gameName = "Battleship";
 var boardSize = 10;
 var cols = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+var inputArr;
 var ships = ["Aircraft Carrier", "Battleship", "Submarine"];
 var shipTypes = ["A", "B", "S"];
 var userNames = ["Alice", "Bob"];
@@ -142,7 +143,6 @@ function hitBox (obj, player, opponent) {
 	obj.addEventListener("click", function(e) {
 		
 		//hit = Math.random() >= 0.5;
-		//var index = opponent == 2 ? 0 : 1;
 		
 		var hit = localStorage.getItem(opponent+"z"+e.currentTarget.innerHTML) != null ? localStorage.getItem(opponent+"z"+e.currentTarget.innerHTML) : null;
 		var bda = hit != null ? "Direct Hit" : "Miss";
@@ -195,26 +195,46 @@ function hitBox (obj, player, opponent) {
 	});
 }
 
-function regexShip(input, player) {
+function regexShip(inputArr, input, player) {
 	var rSuccess = true;
-	var aSearch = new RegExp("/[a]:[A-K](10|[0-9])-[A-K](10|[0-9])/gmi");
-	var bSearch = new RegExp("/[b]:[A-K](10|[0-9])-[A-K](10|[0-9])/gmi");
-	var aSearch = new RegExp("/[s]:[A-K](10|[0-9])-[A-K](10|[0-9])/gmi");
-//	var search = new RegExp("abc");
-//	var search2 = new RegExp("abcde");
+	var matched;
+	var searches = [0,0,0];
+	inputArr = [];
+
+	searches[0] = /([A]:?\(?[A-K](10|[0-9])-?[A-K](10|[0-9])\)?)/gmi;
+	searches[1] = /([B]:?\(?[A-K](10|[0-9])-?[A-K](10|[0-9])\)?)/gmi;
+	searches[2] = /([S]:?\(?[A-K](10|[0-9])-?[A-K](10|[0-9])\)?)/gmi;
+	start = /[A-K](10|[0-9])/gmi;
+	end = /(?<=\-)[A-K](10|[0-9])/gmi;
 	
-	alert("Player" + player + " input is: " + input);
+	for (x=0; x<shipTypes.length; x++) {
+		y = input.match(searches[x]);
+		if (y != null) {
+			inputArr[x] = y;
+			console.log(inputArr);
+		} else {
+			rSuccess = false;
+			return false;
+		}
+	}
 	
-	var inputArr = input.split(",");
+	for (x=0; x<shipTypes.length; x++) {
+		y = input.match(searches[x]);
+		if (y != null) {
+			inputArr[x] = y;
+			console.log(inputArr);
+		} else {
+			rSuccess = false;
+			return false;
+		}
+	}
 	
-	rSuccess = rSuccess == true ? inputArr : false;
+	alert("Player" + player + " input is: " + inputArr);
 	
 	orientation = 0; //vertical(numbers), 1=horizontal(letters)
 	v = 3;
 	h = cols[3];
-	
-	shipType="A";
-	
+		
 	for (x=0; x<shipTypes.length; x++) {
 		shipType = shipTypes[x];
 		
@@ -240,11 +260,11 @@ function regexShip(input, player) {
 				localStorage.setItem(player + "z" + h+(v+i), player + "S" + (i+1));
 			}
 		} else {
+			rSuccess = false;
 			return false;
 		}
 	}
-//	return rSuccess;
-	return false;
+	return rSuccess;
 }
 
 function processShips(player) {
@@ -259,25 +279,25 @@ function processShips(player) {
 		userNames[1] = document.inputForm2.inputName2.value != null ? document.inputForm2.inputName2.value : "Bob";
 		localStorage.setItem("Player2", userNames[1]);
 	}
-		
-    if (input == "" || input.length <= 5 || input.split(",").length != 3) {
+	
+	if (input.indexOf(',') > -1) inputArr = input.split(",");
+	if (input.indexOf(';') > -1) inputArr = input.split(";");
+
+    if (input == "" || input.length <= 5 || inputArr.length != 3) {
 		success = false;
 		alert ("Not valid starting positions.");
 		return false;
     } else {
-    	var inputArr = regexShip (input, player);
-    	var inputArr = true;
-    	if (inputArr == false) {
-			success = false;
+    	alert("processing: " + inputArr);
+    	
+    	var regex = regexShip (inputArr, input, player);
+    	
+    	if (regex == false) {
+    		success = false;
 			alert ("No valid regex found.");
 			return false;
     	}
-		console.log("Player " + player + " success");
-		
-		for (var i = 0; i < inputArr.length; i++) {
-    		positions[i] = inputArr[i];
-			setShips(player, ships[i], inputArr[i]);
-		}
+		console.log("Player " + player + " success " + regex);
     }
     
     console.log (inputArr);
@@ -298,13 +318,7 @@ function processShips(player) {
 	return false;	// must stay false or form will reload
 }
 
-function getShip(player, ship) {
-	return localStorage.getItem("Player" + player + " " + ship);
-}
 
-function setShips(player, ship, coords) {
-	return localStorage.setItem("Player" + player + " " + ship, coords);
-}
 
 function viewScores(output) {
 //	if (document.getElementById("noise").innerHTML.length > 5){ break;};
@@ -398,4 +412,12 @@ function updateScores(){
 
 function randO () {
 	return ocean[Math.floor(Math.random()*ocean.length)];
+}
+
+function getShip(player, ship) {
+	return localStorage.getItem("Player" + player + " " + ship);
+}
+
+function setShips(player, ship, coords) {
+	return localStorage.setItem("Player" + player + " " + ship, coords);
 }

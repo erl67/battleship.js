@@ -16,9 +16,8 @@ Pitt ID: erl67@pitt.edu
 ## Running the App
 
 1. This game uses local storage to hold all game data. The game will remain persistant when the browser closes.
-2. If the browser closes, reopening the game will return to the ready page for the next player.
+2. If the browser closes, reopening the game will return to the ready page for the active turn.
 3. There is a reset button to clear local storage if you desire to start a new game.
 4. The game is also hosted on my personal server at http://cs1520.ericlaslo.com/page2/
-5. The files in the root directory will run the game. They are a duplicate of the /WebContent verion. Eclipse doesn't put then there natively.
-
-
+5. The files in the root directory will run the game. They are a duplicate of the /WebContent verion. Eclipse doesn't put then there natively. So I just made a duplicate copy.
+6. Ocean surprises aren't fixed. They will move around during the game.

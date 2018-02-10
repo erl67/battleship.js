@@ -21,3 +21,4 @@ Pitt ID: erl67@pitt.edu
 4. The game is also hosted on my personal server at http://cs1520.ericlaslo.com/page2/
 5. The files in the root directory will run the game. They are a duplicate of the /WebContent verion. Eclipse doesn't put then there natively. So I just made a duplicate copy.
 6. Ocean surprises aren't fixed. They will move around during the game.
+7. If you get try to place two ships in the same spot the game will reset (because I didn't have time clear them manually). So player 1 will have to re-enter positions if player 2 does it.

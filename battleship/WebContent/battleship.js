@@ -204,19 +204,8 @@ function regexShip(inputArr, input, player) {
 	searches[0] = /([A]:?\(?[A-K](10|[0-9])-?[A-K](10|[0-9])\)?)/gmi;
 	searches[1] = /([B]:?\(?[A-K](10|[0-9])-?[A-K](10|[0-9])\)?)/gmi;
 	searches[2] = /([S]:?\(?[A-K](10|[0-9])-?[A-K](10|[0-9])\)?)/gmi;
-	start = /[A-K](10|[0-9])/gmi;
-	end = /(?<=\-)[A-K](10|[0-9])/gmi;
-	
-	for (x=0; x<shipTypes.length; x++) {
-		y = input.match(searches[x]);
-		if (y != null) {
-			inputArr[x] = y;
-			console.log(inputArr);
-		} else {
-			rSuccess = false;
-			return false;
-		}
-	}
+	var startPosition = /([A-K](10|[0-9]))/mi;
+	var endPosition = /(?<=\-)([A-K](10|[0-9]))/mi;
 	
 	for (x=0; x<shipTypes.length; x++) {
 		y = input.match(searches[x]);
@@ -231,40 +220,82 @@ function regexShip(inputArr, input, player) {
 	
 	alert("Player" + player + " input is: " + inputArr);
 	
-	orientation = 0; //vertical(numbers), 1=horizontal(letters)
-	v = 3;
-	h = cols[3];
-		
-	for (x=0; x<shipTypes.length; x++) {
+	for (x=0; x < shipTypes.length; x++) {
 		shipType = shipTypes[x];
 		
 		if (shipType == "A") {
-			orientation = 0; //vertical(numbers), 1=horizontal(letters)
-			v = 3;
-			h = cols[3];
+			
+			grids = calculateGrid(startPosition.exec(inputArr[x])[0], endPosition.exec(inputArr[x])[0]);
+			
+			startGrid = grids[0];
+			endGrid = grids[1];
+			h = grids[2];
+			hi = grids[3];
+			v = grids[4];
+
 			for (i = 0; i < 5; i++) {
-				localStorage.setItem(player + "z" + h+(v+i), player + "A" + (i+1));
+				value = (orientation == 0 ) ? h + (v+i) : cols[hi+i]+v; 
+				if (localStorage.getItem(player + "z" + value) != null) {return false;};
+				localStorage.setItem(player + "z" + value, player + "A" + (i+1));
 			}
 		} else if (shipType == "B") {
-			orientation = 1; //vertical(numbers), 1=horizontal(letters)
-			v = 5;
-			h = cols[5];
+			
+			grids = calculateGrid(startPosition.exec(inputArr[x])[0], endPosition.exec(inputArr[x])[0]);
+			
+			startGrid = grids[0];
+			endGrid = grids[1];
+			h = grids[2];
+			hi = grids[3];
+			v = grids[4];
+
 			for (i = 0; i < 4; i++) {
-				localStorage.setItem(player + "z" +  h+(v+i), player + "B" + (i+1));
+				value = (orientation == 0 ) ? h + (v+i) : cols[hi+i]+v; 
+				if (localStorage.getItem(player + "z" + value) != null) {return false;};
+				localStorage.setItem(player + "z" + value, player + "B" + (i+1));
 			}
 		} else if (shipType == "S") {
-			orientation = 0; //vertical(numbers), 1=horizontal(letters)
-			v = 8;
-			h = cols[9];
+			
+			grids = calculateGrid(startPosition.exec(inputArr[x])[0], endPosition.exec(inputArr[x])[0]);
+			
+			startGrid = grids[0];
+			endGrid = grids[1];
+			h = grids[2];
+			hi = grids[3];
+			v = grids[4];
+
 			for (i = 0; i < 3; i++) {
-				localStorage.setItem(player + "z" + h+(v+i), player + "S" + (i+1));
+				value = (orientation == 0 ) ? h + (v+i) : cols[hi+i]+v; 
+				if (localStorage.getItem(player + "z" + value) != null) {return false;};
+				localStorage.setItem(player + "z" + value, player + "S" + (i+1));
 			}
-		} else {
-			rSuccess = false;
-			return false;
 		}
 	}
-	return rSuccess;
+}
+
+function calculateGrid(startGrid, endGrid) {
+	//alert (startGrid + " - " + endGrid);
+
+	orientation = startGrid.charAt(0) == endGrid.charAt(0) ? 0 : 1;
+	if (orientation == 0) {
+		if (parseInt(startGrid.substring(1)) > parseInt(endGrid.substring(1))){
+			swap = startGrid;
+			startGrid = endGrid;
+			endGrid = swap;
+		}
+	} else {
+		if (cols.indexOf(startGrid.charAt(0)) > cols.indexOf(endGrid.charAt(0))){
+			swap = startGrid;
+			startGrid = endGrid;
+			endGrid = swap;
+		}
+	}
+	h = startGrid.charAt(0);
+	hi = cols.indexOf(startGrid.charAt(0));
+	v = parseInt(startGrid.substring(1));
+	
+	//alert ("v:" + v + " h:" + h + " o:" + orientation + " cols:" + hi);
+	
+	return [startGrid, endGrid, h, hi, v];
 }
 
 function processShips(player) {
@@ -288,14 +319,15 @@ function processShips(player) {
 		alert ("Not valid starting positions.");
 		return false;
     } else {
-    	alert("processing: " + inputArr);
     	
     	var regex = regexShip (inputArr, input, player);
     	
     	if (regex == false) {
     		success = false;
 			alert ("No valid regex found.");
-			return false;
+			localStorage.clear();
+		    window.scrollTo(0, 0);
+			location.reload();
     	}
 		console.log("Player " + player + " success " + regex);
     }

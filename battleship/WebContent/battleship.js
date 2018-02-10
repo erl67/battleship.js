@@ -7,7 +7,6 @@ var shipTypes = ["A", "B", "S"];
 var userNames = ["Alice", "Bob"];
 var scores = [0,0];
 var health = [5,4,3,5,4,3];
-var ocean = ["🌊", "🏊", "🏄", "🤽", "⛵", "🐟", "🐡", "🦀", "🦈", "🐋", "🐳", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]
 
 var inProgress = localStorage.getItem("GameInProgress") == null ? false : true;
 var activeTurn = localStorage.getItem("activeTurn") == 2 ? 2 : 1;
@@ -41,10 +40,7 @@ function intro(obj) {
 		document.getElementById("player1input").style.display = "block";
 	}
 	
-//	document.cookie += userNames[0] + "," + scores[0] + "," + userNames[1] + "," + scores[1] + ",";
-//	document.cookie += userNames[0] + "," + randO() + "," + userNames[1] + "," + randO() + ",";
 }
-
 
 function gameTurnReady (player) {
     window.scrollTo(0, 0);
@@ -155,17 +151,17 @@ function hitBox (obj, player, opponent) {
 			
 			if (hitType == "A") {
 				health[3 * (opponent-1) + 0] = health[3 * (opponent-1) + 0] - 1;
-				if (health[3 * (opponent-1) + 0]==0) alert ("You sank " + userNames[opponent-1] + "'s aircraft carrier");
+				if (health[3 * (opponent-1) + 0]==0) alert ("You sank " + userNames[opponent-1] + "'s Aircraft Carrier");
 			} else if (hitType == "B") {
 				health[3 * (opponent-1) + 1] = health[3 * (opponent-1) + 1] - 1;
-				if (health[3 * (opponent-1) + 1]==0) alert ("You sank " + userNames[opponent-1] + "'s battleship");
+				if (health[3 * (opponent-1) + 1]==0) alert ("You sank " + userNames[opponent-1] + "'s Battleship");
 			} 
 			else if (hitType == "S") {
 				health[3 * (opponent-1) + 2] = health[3 * (opponent-1) + 2] - 1;
-				if (health[3 * (opponent-1) + 2]==0) alert ("You sank " + userNames[opponent-1] + "'s submarine");
+				if (health[3 * (opponent-1) + 2]==0) alert ("You sank " + userNames[opponent-1] + "'s Submarine");
 			}
-			updateScores();
 			
+			updateScores();
 			if (document.getElementById("player2Score").innerHTML == 24 || document.getElementById("player1Score").innerHTML == 24) gameOver();
 			
 		} else {
@@ -223,7 +219,7 @@ function regexShip(inputArr, input, player) {
 	for (x=0; x < shipTypes.length; x++) {
 		shipType = shipTypes[x];
 		
-		if (shipType == "A") {
+		if (shipType == "A") {  //could optimize this
 			
 			grids = calculateGrid(startPosition.exec(inputArr[x])[0], endPosition.exec(inputArr[x])[0]);
 			
@@ -235,7 +231,7 @@ function regexShip(inputArr, input, player) {
 
 			for (i = 0; i < 5; i++) {
 				value = (orientation == 0 ) ? h + (v+i) : cols[hi+i]+v; 
-				if (localStorage.getItem(player + "z" + value) != null) {return false;};
+				if (localStorage.getItem(player + "z" + value) != null) {localStorage.clear(); return false;};
 				localStorage.setItem(player + "z" + value, player + "A" + (i+1));
 			}
 		} else if (shipType == "B") {
@@ -250,7 +246,7 @@ function regexShip(inputArr, input, player) {
 
 			for (i = 0; i < 4; i++) {
 				value = (orientation == 0 ) ? h + (v+i) : cols[hi+i]+v; 
-				if (localStorage.getItem(player + "z" + value) != null) {return false;};
+				if (localStorage.getItem(player + "z" + value) != null) {localStorage.clear(); return false;};
 				localStorage.setItem(player + "z" + value, player + "B" + (i+1));
 			}
 		} else if (shipType == "S") {
@@ -265,7 +261,7 @@ function regexShip(inputArr, input, player) {
 
 			for (i = 0; i < 3; i++) {
 				value = (orientation == 0 ) ? h + (v+i) : cols[hi+i]+v; 
-				if (localStorage.getItem(player + "z" + value) != null) {return false;};
+				if (localStorage.getItem(player + "z" + value) != null) {localStorage.clear(); return false;};
 				localStorage.setItem(player + "z" + value, player + "S" + (i+1));
 			}
 		}
@@ -276,6 +272,7 @@ function calculateGrid(startGrid, endGrid) {
 	//alert (startGrid + " - " + endGrid);
 
 	orientation = startGrid.charAt(0) == endGrid.charAt(0) ? 0 : 1;
+	
 	if (orientation == 0) {
 		if (parseInt(startGrid.substring(1)) > parseInt(endGrid.substring(1))){
 			swap = startGrid;
@@ -325,9 +322,8 @@ function processShips(player) {
     	if (regex == false) {
     		success = false;
 			alert ("No valid regex found.");
-			localStorage.clear();
-		    window.scrollTo(0, 0);
-			location.reload();
+		    //window.scrollTo(0, 0);
+			//location.reload();
     	}
 		console.log("Player " + player + " success " + regex);
     }
@@ -350,10 +346,7 @@ function processShips(player) {
 	return false;	// must stay false or form will reload
 }
 
-
-
 function viewScores(output) {
-//	if (document.getElementById("noise").innerHTML.length > 5){ break;};
     window.scrollTo(0, 0);
 
 	var scores = document.cookie;
@@ -429,9 +422,7 @@ function resetGame () {
 		localStorage.clear();
 	    window.scrollTo(0, 0);
 		location.reload();
-	} else {
-	    // do nothing
-	}
+	} 
 	return false;
 }
 
@@ -442,14 +433,7 @@ function updateScores(){
 	document.getElementById("scores").style.display = "block";
 }
 
+var ocean = ["🌊", "🏊", "🏄", "🤽", "⛵", "🐟", "🐡", "🦀", "🦈", "🐋", "🐳", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "]
 function randO () {
 	return ocean[Math.floor(Math.random()*ocean.length)];
-}
-
-function getShip(player, ship) {
-	return localStorage.getItem("Player" + player + " " + ship);
-}
-
-function setShips(player, ship, coords) {
-	return localStorage.setItem("Player" + player + " " + ship, coords);
 }

@@ -82,9 +82,11 @@ td {
 .miss {
 	background-color: #a0c0c0;
 	border: none;
+	cursor: default;
 }
 .hit {
 	background-color:rgba(178, 76, 76, 0.5);
+	cursor: default;
 }
 footer {
 	height: 0px;

@@ -147,7 +147,7 @@ function hitBox (obj, player, opponent) {
 		var hit = localStorage.getItem(opponent+"z"+e.currentTarget.innerHTML) != null ? localStorage.getItem(opponent+"z"+e.currentTarget.innerHTML) : null;
 		var bda = hit != null ? "Direct Hit" : "Miss";
 		
-		alert("You attacked: " + e.currentTarget.innerHTML + " BDA as follows: " + bda);
+		alert("You attacked: " + e.currentTarget.innerHTML + "\n\nBDA as follows: " + bda);
 		
 		if (hit != null) {
 			localStorage.setItem(e.currentTarget.getAttribute("id"), "❌");
@@ -223,21 +223,21 @@ function regexShip(input, player) {
 			v = 3;
 			h = cols[3];
 			for (i = 0; i < 5; i++) {
-				localStorage.setItem(player + "z" + (v+i)+h, player + "A" + (i+1));
+				localStorage.setItem(player + "z" + h+(v+i), player + "A" + (i+1));
 			}
 		} else if (shipType == "B") {
 			orientation = 1; //vertical(numbers), 1=horizontal(letters)
 			v = 5;
 			h = cols[5];
 			for (i = 0; i < 4; i++) {
-				localStorage.setItem(player + "z" + (v+i)+h, player + "B" + (i+1));
+				localStorage.setItem(player + "z" +  h+(v+i), player + "B" + (i+1));
 			}
 		} else if (shipType == "S") {
 			orientation = 0; //vertical(numbers), 1=horizontal(letters)
 			v = 8;
 			h = cols[9];
 			for (i = 0; i < 3; i++) {
-				localStorage.setItem(player + "z" + (v+i)+h, player + "S" + (i+1));
+				localStorage.setItem(player + "z" + h+(v+i), player + "S" + (i+1));
 			}
 		} else {
 			return false;
@@ -333,8 +333,8 @@ function viewScores(output) {
 	button.setAttribute("id", "btnScores");
 	button.innerHTML = "Return to Game";
 	button.addEventListener ("click", function() {
-		document.getElementById("noise").style.display = "none";
-		document.getElementById("noise").innerHTML = "";
+		document.getElementById(output).style.display = "none";
+		document.getElementById(output).innerHTML = "";
 	    window.scrollTo(0, 0);
 		location.reload();
 	});
@@ -359,13 +359,9 @@ function blankScreen(){
 	document.getElementsByTagName("footer")[0].style.display = "none";
 }
 
-function gameOver () { //not the best way to handle scores but it's easier
+function gameOver () { //not the best way to handle scores
 	blankScreen();
 	
-	document.getElementsByTagName("header")[0].style.display = "block";
-	document.getElementsByTagName("footer")[0].style.display = "block";
-	document.getElementById("gameOver").style.display = "block";
-
 	var x = document.getElementById("player1Score").innerHTML;
 	var y = document.getElementById("player2Score").innerHTML;
 	
@@ -373,8 +369,12 @@ function gameOver () { //not the best way to handle scores but it's easier
 	
 	document.getElementById("gameOver").innerHTML = "Game Over</br>The winner is: " + winner;
 	document.cookie += userNames[0] + "," + x + "," + userNames[1] + "," + y + ",";
+	
+	document.getElementsByTagName("header")[0].style.display = "block";
+	document.getElementsByTagName("footer")[0].style.display = "block";
+	document.getElementById("gameOver").style.display = "block";
 
-	alert ("The End");
+	alert ("Game Over.\n\nThe winner is " + winner);
 	resetGame();
 }
 

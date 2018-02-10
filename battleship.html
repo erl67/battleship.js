@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="googlebot" content="noindex">
+<meta name="author" content="erl67">
+<meta name="description" content="CS1520 Project 2 Page for ERL67 https://w8s-class.github.io/CS1520-Class-Information/assignments/assignment2/index.html">
+<link rel="alternate" title="hosted version" href="http://cs1520.ericlaslo.com/page2/">
+<link rel="icon" type="image/x-icon" href="./favicon.ico"> <!-- https://www.freefavicon.com/freefavicons/objects/iconinfo/battleship-2-152-289597.html -->
+<link rel="stylesheet" type="text/css" href="./style.css">
+<script src="./footerbar.js" type="text/javascript"></script>
+<script src="./color.js" type="text/javascript"></script>
+<script src="./battleship.js" type="text/javascript"></script>
+<title>CS1520 Assignment 2 - Battleship - ERL67</title>
+</head>
+
+<body id="main">
+
+<header>
+<h3 title="click to recolor" onclick="reColor('noise', 'main', true);">CS1520 Assignment 2</h3>
+<h4><span id="intro"></span></h4>
+</header>
+
+<div id="player1input" class="initialInput">
+<h5>Player 1, enter your ship positions</h5>
+    <form name="inputForm" onsubmit="return processShips(1);"> 
+       	<input type="text" name="inputName" value="" placeholder="Name" maxlength="20">
+    	<input type="text" name="inputShips" value="" placeholder="3 ships">
+    	<button type="submit">Submit</button>
+    </form>
+</div>
+
+<div id="player2input" class="initialInput">
+<h5>Player 2, enter your ship positions</h5>
+    <form name="inputForm2" onsubmit="return processShips(2);"> 
+        <input type="text" name="inputName2" value="" placeholder="Name" maxlength="20">
+    	<input type="text" name="inputShips2" value="" placeholder="3 ships">
+    	<button type="submit">Submit</button>
+    </form>
+</div>
+   
+<div id="player1warn" class="warn">
+	<h4 id="player1NameB"></h4>
+	<p>Player 1 prepare for attack</p>
+	<button type="submit" onclick="gameTurn(1);" class="btn">Attack</button><br/>
+</div>
+
+<div id="player2warn" class="warn">
+	<h4 id="player2NameB"></h4>
+	<p>Player 2 prepare for attack</p>
+	<button type="submit" onclick="gameTurn(2);" class="btn">Attack</button><br/>
+</div>
+
+<div id="player1" class="board">
+	<h4 id="player1Name">Player 1</h4>
+	<div id="board1"></div>
+	<div id="board1a"></div>
+</div>
+
+<div id="player2" class="board">
+	<h4 id="player2Name">Player 2</h4>
+	<div id="board2"></div>
+	<div id="board2a"></div>
+</div>
+
+<div id="scores">
+	<h6>
+		<span id="player1NameC"></span>:<span id="player1Score"></span>
+		<span id="player2NameC"></span>:<span id="player2Score"></span>
+	</h6>
+</div>
+
+<div id="highScores"></div>
+<div id="gameOver"></div>
+ 
+<footer id="noise">
+	<button type="submit" onclick="return resetGame();" class="btnReset">Reset</button><br/>
+	<button type="submit" onclick="return viewScores('highScores');" class="btnScores">View Top Scores</button><br/>
+</footer>
+
+<script type='text/javascript'>
+window.onload = function() {
+	//colorize(['main']);
+	//colorizeText(['main'], true);
+	//footerBar();
+	intro('intro');
+};
+</script>
+
+</body>
+</html>

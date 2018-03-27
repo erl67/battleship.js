@@ -191,7 +191,8 @@ function regexShip(input, player) {
 	searches[1] = /([B]:?\(?[A-K](10|[0-9])-?[A-K](10|[0-9])\)?)/gmi;
 	searches[2] = /([S]:?\(?[A-K](10|[0-9])-?[A-K](10|[0-9])\)?)/gmi;
 	var startPosition = /([A-K](10|[0-9]))/mi;
-	var endPosition = /(?<=\-)([A-K](10|[0-9]))/mi;
+//	var endPosition = /(?<=\-)([A-K](10|[0-9]))/mi;	//breaks on firefox
+	var endPosition = /(?=\-)([A-K](10|[0-9]))/mi;
 	
 	for (x=0; x<shipTypes.length; x++) {
 		y = input.match(searches[x]);

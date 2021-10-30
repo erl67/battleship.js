@@ -1,8 +1,5 @@
-# You Sunk My Battleship -- <Replace with your name>
+# You Sunk My Battleship 
 
-Name: Eric Laslo
-
-Pitt ID: erl67@pitt.edu
 
 ## Installation
 
